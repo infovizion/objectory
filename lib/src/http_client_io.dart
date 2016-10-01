@@ -118,7 +118,7 @@ class ObjectoryHttpImpl extends Objectory {
   Future doUpdate(String collection, var id, Map toUpdate) {
     assert(id.runtimeType == idType);
     return _postMessage(
-        _createCommand('update', collection), toUpdate, {"_id": id});
+        _createCommand('update', collection), toUpdate, {"id": id});
   }
 
   Future doInsert(String collectionName, Map map) =>

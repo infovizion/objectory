@@ -60,7 +60,7 @@ class ObjectoryPostgreSqlImpl extends Objectory{
 
   Future doUpdate(String collection,var id, Map toUpdate) {
         assert(id.runtimeType == idType);
-        return db.collection(collection).update({"_id": id},toUpdate);
+        return db.collection(collection).update({"id": id},toUpdate);
   }
 
 
@@ -68,7 +68,7 @@ class ObjectoryPostgreSqlImpl extends Objectory{
     => await db.collection(collectionName).find(selector).toList();
 
   Future remove(PersistentObject persistentObject) =>
-      gateway.table(persistentObject.collectionName).delete(remove({"_id":persistentObject.id});
+      gateway.table(persistentObject.collectionName).delete(remove({"id":persistentObject.id});
   
   ObjectoryCollection constructCollection() => new ObjectoryCollectionPostgreSqlImpl(this);
 

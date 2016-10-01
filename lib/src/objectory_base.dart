@@ -137,7 +137,7 @@ class Objectory {
     var result = newInstance(classType);
     result.map = map;
     if (result is PersistentObject) {
-      result.id = map["_id"];
+      result.id = map["id"];
       if (result.id != null) {
         objectory.addToCache(result);
       }
@@ -159,7 +159,7 @@ class Objectory {
       res = await update(persistentObject);
     } else {
       persistentObject.id = idGenerator();
-      persistentObject.map["_id"] = persistentObject.id;
+      persistentObject.map["id"] = persistentObject.id;
       objectory.addToCache(persistentObject);
       res = await insert(persistentObject);
     }
@@ -329,8 +329,8 @@ class Objectory {
   Future saveObjectToHistory(PersistentObject obj, String operationType) async {
     String historyCollectionName = obj.collectionName + 'History';
     Map toInsert = new Map.from(obj.map);
-    var objectId = toInsert.remove('_id');
-    toInsert['_id'] = idGenerator();
+    var objectId = toInsert.remove('id');
+    toInsert['id'] = idGenerator();
     toInsert['_originalObjectId'] = objectId;
     toInsert['_logOperationType'] = operationType;
     await doInsert(historyCollectionName, toInsert);

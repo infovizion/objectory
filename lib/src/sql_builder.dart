@@ -1,11 +1,12 @@
 import 'objectory_query_builder.dart';
+import 'persistent_object.dart';
 
-class PgQueryBuilder {
+class SqlQueryBuilder {
   ObjectoryQueryBuilder parent;
   String whereClause = '';
   Map<String, dynamic> params = {};
   int paramCounter = 0;
-  PgQueryBuilder(this.parent);
+  SqlQueryBuilder(this.parent);
 
   processQueryPart() {
     Map sourceQuery = parent.map[r'$query'];
@@ -49,5 +50,22 @@ class PgQueryBuilder {
         throw new Exception('Unexpected branch in _processQueryNode');
       }
     }
+  }
+}
+
+class SqlInsertBuilder {
+  PersistentObject po;
+  String insertCommand = '';
+  SqlInsertBuilder(this.po);
+  String getSqlCommand() {
+    List<String> fieldNames = po.map.keys.toList();
+    fieldNames.remove('id');
+    List<String> paramNames = fieldNames.map((el)=> '@$el').toList();
+    return '''
+    INSERT INTO "${po.collectionName}"
+      (${fieldNames.join(',')})
+      VALUES (${paramNames.join(',')})
+        RETURNING "id"
+   ''';
   }
 }

@@ -100,11 +100,11 @@ class ObjectoryHandler {
           await db.collection(header.collection).insert(mapToSave);
       return sendResult(header, responseData);
     } else {
-      var id = mapToSave['_id'];
+      var id = mapToSave['id'];
       if (id != null) {
         var responseData = await db
             .collection(header.collection)
-            .update({'_id': id}, mapToSave);
+            .update({'id': id}, mapToSave);
         return sendResult(header, responseData);
       } else {
         if (idMap != null) {

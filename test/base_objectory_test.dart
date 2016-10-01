@@ -8,7 +8,7 @@ testAuthorCreation(){
   author.name = 'vadim';
   author.age = 99;
   author.email = 'sdf';
-  expect((author.map.keys.toList() as List)[0],"_id");
+  expect((author.map.keys.toList() as List)[0],"id");
   //expect(author.name,'VADIM', reason: 'converted to uppercase by custom  setter');
   author.address.cityName = 'Tyumen';
   author.address.streetName = 'Elm tree street';
@@ -118,7 +118,7 @@ testObjectWithListOfInternalObjects2Map() {
   expect(map["addresses"][1]["cityName"],"Moscow");
 }
 testMap2ObjectWithListOfInternalObjects() {
-  var map = {"_id": null, "name": "Tequila corporation", "addresses": [{"cityName": "Mexico"}, {"cityName": "Moscow"}]};
+  var map = {"id": null, "name": "Tequila corporation", "addresses": [{"cityName": "Mexico"}, {"cityName": "Moscow"}]};
   Customer customer = objectory.map2Object(Customer, map);
   expect(customer.name,"Tequila corporation");
   expect(customer.addresses.length,2);
@@ -133,19 +133,19 @@ testObjectWithListtOfExternalRefs2Map() {
   father = new Person();
   father.firstName = 'Father';
   father.id = new ObjectId();
-  father.map["_id"] = father.id;
+  father.map["id"] = father.id;
   objectory.addToCache(father);
   son = new Person();
   son.firstName = 'Son';
   son.father = father;
   son.id = new ObjectId();
-  son.map["_id"] = son.id;
+  son.map["id"] = son.id;
   objectory.addToCache(son);
   daughter = new Person();
   daughter.father = father;
   daughter.firstName = 'daughter';
   daughter.id = new ObjectId();
-  daughter.map["_id"] = daughter.id;
+  daughter.map["id"] = daughter.id;
   objectory.addToCache(daughter);
   father.children.add(son);
   father.children.add(null);
@@ -158,7 +158,7 @@ testMap2ObjectWithListtOfInternalObjectsWithExternalRefs() {
   user.login = 'testLogin';
   user.name = 'TestUser';
   user.id = new ObjectId();
-  user.map["_id"] = user.id;
+  user.map["id"] = user.id;
   objectory.addToCache(user);
   Map articleMap = {"title": "test article", "body": "sasdfasdfasdf",
                     "comments": [{"body": "Excellent", "user": user.id}]};

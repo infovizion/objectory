@@ -15,19 +15,19 @@ class User{
   String login;
 }
 
-class Article{
-  String title;
-  String body;
-  Author author;
-  List<BlogComment> comments;
-}
-@embedded
-class BlogComment{
-  User user;
-
-  String body;
-  DateTime date;
-}
+//class Article{
+//  String title;
+//  String body;
+//  Author author;
+//  List<BlogComment> comments;
+//}
+//@embedded
+//class BlogComment{
+//  User user;
+//
+//  String body;
+//  DateTime date;
+//}
 
 main() {
   new ModelGenerator(#domain_model_proto).generateTo('domain_model_generated.dart');

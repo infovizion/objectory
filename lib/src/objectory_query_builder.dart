@@ -16,7 +16,7 @@ class ObjectoryQueryBuilder extends SelectorBuilder{
 
   ObjectoryQueryBuilder eq(String fieldName,value) => super.eq(fieldName, value);
   ObjectoryQueryBuilder id(value) {
-    return super.eq('_id',value);
+    return super.eq('id',value);
   }
   ObjectoryQueryBuilder ne(String fieldName, value) => super.ne(fieldName, value);
   ObjectoryQueryBuilder gt(String fieldName,value)=>super.gt(fieldName, value);

@@ -117,9 +117,9 @@ class ObjectoryClient {
     }
     else
     {
-      var id = mapToSave['_id'];
+      var id = mapToSave['id'];
       if (id != null) {
-        db.collection(header.collection).update({'_id': id},mapToSave).then((responseData) {
+        db.collection(header.collection).update({'id': id},mapToSave).then((responseData) {
           sendResult(header, responseData);
         });
       }
