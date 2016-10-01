@@ -234,7 +234,7 @@ class Objectory {
     throw new Exception('Must be implemented');
   }
 
-  void close() {
+  close() async {
     throw new Exception('Must be implemented');
   }
 

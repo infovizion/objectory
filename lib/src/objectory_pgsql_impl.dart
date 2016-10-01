@@ -1,9 +1,9 @@
 library objectory_direct_connection;
-import 'package:mongo_dart/mongo_dart.dart' hide where;
 import 'dart:async';
 import 'persistent_object.dart';
 import 'objectory_query_builder.dart';
 import 'objectory_base.dart';
+import 'package:postgresql/postgresql.dart';
 
 class ObjectoryCollectionPostgreSqlImpl extends ObjectoryCollection{
   ObjectoryPostgreSqlImpl objectoryImpl;
@@ -46,15 +46,14 @@ class ObjectoryCollectionPostgreSqlImpl extends ObjectoryCollection{
 }
 
 class ObjectoryPostgreSqlImpl extends Objectory{
-  Db db;
+  Connection connection;
   ObjectoryPostgreSqlImpl(String uri,Function registerClassesCallback,bool dropCollectionsOnStartup):
-    super(uri, registerClassesCallback, dropCollectionsOnStartup);
-  Future open(){
-    if (db != null){
-      db.close();
+    super('', registerClassesCallback, dropCollectionsOnStartup);
+  Future open() async {
+    if (connection != null){
+      await connection.close();
     }
-    db = new Db(uri);
-    return db.open();
+    connection = await connect(uri);
   }
   Future doInsert(String collectionName, Map toInsert) =>
       db.collection(collectionName).insert(toInsert);
@@ -69,28 +68,16 @@ class ObjectoryPostgreSqlImpl extends Objectory{
     => await db.collection(collectionName).find(selector).toList();
 
   Future remove(PersistentObject persistentObject) =>
-      db.collection(persistentObject.collectionName).remove({"_id":persistentObject.id});
+      gateway.table(persistentObject.collectionName).delete(remove({"_id":persistentObject.id});
   
   ObjectoryCollection constructCollection() => new ObjectoryCollectionPostgreSqlImpl(this);
 
-  Future<Map> dropDb(){
-    return db.drop();
-  }
-
-  Future<Map> wait(){
-    return db.wait();
-  }
 
 
-  void close(){
-    db.close();
-    db = null;
-  }
-  Future dropCollections() async {
-    for (var collection in getCollections()) {
 
-      await db.collection(collection).drop();
-    }
+  close() async {
+    await connection.close();
+    connection = null;
   }
 
 }

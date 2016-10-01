@@ -1,11 +1,29 @@
-import 'package:objectory/src/sql/gateway/gateway.dart';
-import 'package:objectory/src/sql/drivers/drivers.dart';
-main() async{
-  var driver = new PostgresqlDriver(username: 'testdb', database: 'testdb');
-  var gateway = new Gateway(driver);
-  await gateway.connect();
-  //var res = await gateway.table('User').add({'name': 'Daniil'});
-  var res = await gateway.table('User').add({'name': 'Вадим'});
+import 'package:postgresql/postgresql.dart';
+import 'package:objectory/objectory.dart';
+import 'package:objectory/src/query_converter.dart';
+
+main() async {
+  String username = 'test';
+  String password = 'test';
+  String database = 'test';
+  String host = 'localhost';
+  int port = 5432;
+  Connection connection = await connect('postgres://$username:$password@$host:$port/$database');
+  var res = await connection.query('INSERT INTO "test" ("name") VALUES (\'second\') RETURNING "id"').toList();
   print(res);
-  await gateway.disconnect();
+  await connection.close();
+//  var map = (where
+//          .eq('www', 12)
+//          .eq('qqq', 'werwer')
+//          .or(where.ne('eee', 2))
+//          .sortBy('www'))
+//      .map;
+//  print(map);
+//  map = (where.id('123123')).map;
+//  print(map);
+//  var qb = new PgQueryBuilder(
+//      where.eq('www', 12).eq('qqq', 'werwer').or(where.eq('eee', 2)));
+//  qb.processQueryPart();
+//  print(qb.whereClause);
+//  print(qb.params);
 }

@@ -6,7 +6,7 @@ class Author {
   String name;
   String email;
   int age;
-  Address address;
+//  Address address;
 }
 class User{
   String name;
@@ -14,35 +14,35 @@ class User{
   String login;
 }
 
-class Article{
-  String title;
-  String body;
-  Author author;
-  List<Comment> comments;
-}
-@embedded
-class Comment{
-  User user;
-  String body;
-  DateTime date;
-}
-class Customer {
-  String name;
-  List<Address> addresses;
-}
-@embedded
-class Address {
-  String cityName;
-  String zipCode;
-  String streetName;
-}
+//class Article{
+//  String title;
+//  String body;
+//  Author author;
+//  List<Comment> comments;
+//}
+//@embedded
+//class Comment{
+//  User user;
+//  String body;
+//  DateTime date;
+//}
+//class Customer {
+//  String name;
+//  List<Address> addresses;
+//}
+//@embedded
+//class Address {
+//  String cityName;
+//  String zipCode;
+//  String streetName;
+//}
 class Person {
   String firstName;
   String lastName;
-  Address address;
+//  Address address;
   Person father;
   Person mother;
-  List<Person> children;
+//  List<Person> children;
 }
 
 main() {

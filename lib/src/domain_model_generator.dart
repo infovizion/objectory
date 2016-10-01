@@ -102,6 +102,13 @@ part of domain_model;
       }
       output.write('}\n');
     }
+
+    output.write('\n\n /// Postgresql DB Schema \n');
+    output.write('/*\n');
+    classGenerators.forEach((cls) {
+      generateOuputForTable(cls);
+    });
+    output.write('*/\n');
   }
 
   void saveOuput(String fileName) {
@@ -131,6 +138,22 @@ part of domain_model;
         .toList();
     output.write('}\n\n');
   }
+
+  void generateOuputForTable(ClassGenerator classGenerator) {
+    if (classGenerator.isEmbedded) {
+      return;
+    }
+    output.write('CREATE SEQUENCE "${classGenerator.persistentClassName}_id_seq"  INCREMENT 1  MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;\n');
+    output.write(
+        'CREATE TABLE "${classGenerator.persistentClassName}" (\n');
+    output.write(
+        '  "id" integer NOT NULL DEFAULT nextval(\'"${classGenerator.persistentClassName}_id_seq"\'::regclass),\n');
+    classGenerator.properties.forEach(generateOuputForTableColumn);
+    output.write('  CONSTRAINT "${classGenerator.persistentClassName}_px" PRIMARY KEY ("id")\n');
+    output.write(');\n\n');
+  }
+
+
 
   void generateOuputForProperty(PropertyGenerator propertyGenerator) {
     //output.write(propertyGenerator.commentLine);
@@ -162,6 +185,31 @@ part of domain_model;
           "getPersistentList(${propertyGenerator.listElementType},'${propertyGenerator.name}');\n");
     }
   }
+
+  void generateOuputForTableColumn(PropertyGenerator propertyGenerator) {
+    //output.write(propertyGenerator.commentLine);
+    if (propertyGenerator.propertyType == PropertyType.SIMPLE) {
+      output.write('  "${propertyGenerator.name}" ');
+      if (propertyGenerator.type == String) {
+        output.write('character varying(255),\n');
+      } else if (propertyGenerator.type == bool) {
+        output.write('boolean,\n');
+      } else if (propertyGenerator.type == DateTime) {
+        output.write('timestamp,\n');
+      } else if (propertyGenerator.type == int) {
+        output.write('integer,\n');
+      } else if (propertyGenerator.type == num) {
+        output.write('double precision,\n');
+      } else {
+        throw new Exception('Not supported type');
+      }
+    } else if (propertyGenerator.propertyType == PropertyType.PERSISTENT_OBJECT) {
+      output.write('  "${propertyGenerator.name}" character varying(255),\n');
+    } else {
+      throw new Exception('Not supported type: ${PropertyType.PERSISTENT_LIST}');
+    }
+  }
+
 
   void generateOuputForSchemaClass(ClassGenerator classGenerator) {
     output.write('class \$${classGenerator.type} {\n');
