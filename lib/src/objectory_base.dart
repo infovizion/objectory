@@ -201,11 +201,11 @@ class Objectory {
   }
 
   Future insert(PersistentObject persistentObject) async {
-    if (saveAuditData) {
-      persistentObject.map['createdBy'] = userName;
-      persistentObject.map['createdAt'] = new DateTime.now();
-    }
-    await saveObjectToHistory(persistentObject, 'i');
+//    if (saveAuditData) {
+//      persistentObject.map['createdBy'] = userName;
+//      persistentObject.map['createdAt'] = new DateTime.now();
+//    }
+//    await saveObjectToHistory(persistentObject, 'i');
     return doInsert(persistentObject.collectionName, persistentObject.map);
   }
 

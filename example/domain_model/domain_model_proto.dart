@@ -13,6 +13,7 @@ class User{
   String name;
   String email;
   String login;
+  Author author;
 }
 
 //class Article{

@@ -5,7 +5,8 @@ class $User {
   static String get name => 'name';
   static String get email => 'email';
   static String get login => 'login';
-  static final List<String> allFields = [name, email, login];
+  static String get author => 'author';
+  static final List<String> allFields = [name, email, login, author];
   static final List<PropertyDescriptor> simpleFields = [
     const PropertyDescriptor('name', PropertyType.String, 'name')
     ,const PropertyDescriptor('email', PropertyType.String, 'email')
@@ -22,6 +23,8 @@ class User extends PersistentObject {
   set email (String value) => setProperty('email',value);
   String get login => getProperty('login');
   set login (String value) => setProperty('login',value);
+  Author get author => getLinkedObject('author', Author);
+  set author (Author value) => setLinkedObject('author',value);
 }
 
 class $Author {
@@ -48,7 +51,7 @@ class Author extends PersistentObject {
 }
 
 registerClasses() {
-  objectory.registerClass(User,()=>new User(),()=>new List<User>(), {});
+  objectory.registerClass(User,()=>new User(),()=>new List<User>(), {'author': Author});
   objectory.registerClass(Author,()=>new Author(),()=>new List<Author>(), {});
 }
 
@@ -61,6 +64,7 @@ CREATE TABLE "User" (
   "name" character varying(255),
   "email" character varying(255),
   "login" character varying(255),
+  "author" character varying(255),
   CONSTRAINT "User_px" PRIMARY KEY ("id")
 );
 

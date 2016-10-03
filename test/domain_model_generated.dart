@@ -6,16 +6,26 @@ class $User {
   static String get email => 'email';
   static String get login => 'login';
   static final List<String> allFields = [name, email, login];
-  static final List<PropertyDescriptor> simpleFields = [
-    const PropertyDescriptor('name', PropertyType.String, 'name')
-    ,const PropertyDescriptor('email', PropertyType.String, 'email')
-    ,const PropertyDescriptor('login', PropertyType.String, 'login')
-  ];
+}
+
+class $UserTable {
+  static Field get name =>
+      const Field(id: 'name',label: '',title: '',
+          type: String,logChanges: false);
+  static Field get email =>
+      const Field(id: 'email',label: '',title: '',
+          type: String,logChanges: false);
+  static Field get login =>
+      const Field(id: 'login',label: '',title: '',
+          type: String,logChanges: false);
+  static Map<String,Field> get fields =>
+      {'name': name,'email': email,'login': login};
 }
 
 class User extends PersistentObject {
   String get collectionName => 'User';
   List<String> get $allFields => $User.allFields;
+  Map<String,Field> get $fields => $UserTable.fields;
   String get name => getProperty('name');
   set name (String value) => setProperty('name',value);
   String get email => getProperty('email');
@@ -30,15 +40,29 @@ class $Person {
   static String get father => 'father';
   static String get mother => 'mother';
   static final List<String> allFields = [firstName, lastName, father, mother];
-  static final List<PropertyDescriptor> simpleFields = [
-    const PropertyDescriptor('firstName', PropertyType.String, 'firstName')
-    ,const PropertyDescriptor('lastName', PropertyType.String, 'lastName')
-  ];
+}
+
+class $PersonTable {
+  static Field get firstName =>
+      const Field(id: 'firstName',label: '',title: '',
+          type: String,logChanges: true);
+  static Field get lastName =>
+      const Field(id: 'lastName',label: '',title: '',
+          type: String,logChanges: false);
+  static Field get father =>
+      const Field(id: 'father',label: '',title: '',
+          type: Person,logChanges: false);
+  static Field get mother =>
+      const Field(id: 'mother',label: '',title: '',
+          type: Person,logChanges: false);
+  static Map<String,Field> get fields =>
+      {'firstName': firstName,'lastName': lastName,'father': father,'mother': mother};
 }
 
 class Person extends PersistentObject {
   String get collectionName => 'Person';
   List<String> get $allFields => $Person.allFields;
+  Map<String,Field> get $fields => $PersonTable.fields;
   String get firstName => getProperty('firstName');
   set firstName (String value) => setProperty('firstName',value);
   String get lastName => getProperty('lastName');
@@ -54,16 +78,26 @@ class $Author {
   static String get email => 'email';
   static String get age => 'age';
   static final List<String> allFields = [name, email, age];
-  static final List<PropertyDescriptor> simpleFields = [
-    const PropertyDescriptor('name', PropertyType.String, 'name')
-    ,const PropertyDescriptor('email', PropertyType.String, 'email')
-    ,const PropertyDescriptor('age', PropertyType.int, 'age')
-  ];
+}
+
+class $AuthorTable {
+  static Field get name =>
+      const Field(id: 'name',label: '',title: '',
+          type: String,logChanges: false);
+  static Field get email =>
+      const Field(id: 'email',label: '',title: '',
+          type: String,logChanges: false);
+  static Field get age =>
+      const Field(id: 'age',label: '',title: '',
+          type: int,logChanges: false);
+  static Map<String,Field> get fields =>
+      {'name': name,'email': email,'age': age};
 }
 
 class Author extends PersistentObject {
   String get collectionName => 'Author';
   List<String> get $allFields => $Author.allFields;
+  Map<String,Field> get $fields => $AuthorTable.fields;
   String get name => getProperty('name');
   set name (String value) => setProperty('name',value);
   String get email => getProperty('email');

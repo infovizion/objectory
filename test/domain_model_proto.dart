@@ -1,50 +1,41 @@
 library domain_model_proto;
+
 import 'package:objectory/src/domain_model_generator.dart';
 
 //@AsClass('AuthorBase')
 class Author {
+  @Field()
   String name;
+  @Field()
   String email;
+  @Field()
   int age;
 //  Address address;
 }
-class User{
+
+class User {
+  @Field()
   String name;
+  @Field()
   String email;
+  @Field()
   String login;
 }
 
-//class Article{
-//  String title;
-//  String body;
-//  Author author;
-//  List<Comment> comments;
-//}
-//@embedded
-//class Comment{
-//  User user;
-//  String body;
-//  DateTime date;
-//}
-//class Customer {
-//  String name;
-//  List<Address> addresses;
-//}
-//@embedded
-//class Address {
-//  String cityName;
-//  String zipCode;
-//  String streetName;
-//}
 class Person {
+  @Field(logChanges: true)
   String firstName;
+  @Field()
   String lastName;
 //  Address address;
+  @Field()
   Person father;
+  @Field()
   Person mother;
 //  List<Person> children;
 }
 
 main() {
-  new ModelGenerator(#domain_model_proto).generateTo('domain_model_generated.dart');
+  new ModelGenerator(#domain_model_proto)
+      .generateTo('domain_model_generated.dart');
 }

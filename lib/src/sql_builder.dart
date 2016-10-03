@@ -51,6 +51,18 @@ class SqlQueryBuilder {
       }
     }
   }
+  static String getInsertCommand(String tableName, Map content) {
+    List<String> fieldNames = content.keys.toList();
+    fieldNames.remove('id');
+    List<String> paramNames = fieldNames.map((el)=> '@$el').toList();
+    return '''
+    INSERT INTO "${tableName}"
+      (${fieldNames.join(',')})
+      VALUES (${paramNames.join(',')})
+        RETURNING "id"
+   ''';
+  }
+
 }
 
 class SqlInsertBuilder {
