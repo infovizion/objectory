@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 import 'package:bson/bson.dart';
 
 main(){
-  objectory = new Objectory(null,null, false);
+  objectory = new Objectory(null,null);
   registerClasses();
   group("PersistenObjectTests", ()  {
     test("testAuthorCreation",() {

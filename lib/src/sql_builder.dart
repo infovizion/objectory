@@ -5,8 +5,9 @@ class SqlQueryBuilder {
   ObjectoryQueryBuilder parent;
   String tableName;
   String whereClause = '';
-  Map<String, dynamic> params = {};
-  int paramCounter = 0;
+  List params = [];
+  List paramPlaceholders = [];
+  int paramCounter = -1;
   SqlQueryBuilder(this.tableName,this.parent);
 
   processQueryPart() {
@@ -48,10 +49,10 @@ class SqlQueryBuilder {
           valueType == DateTime ||
           valueType == bool) {
         paramCounter++;
-        params['@p$paramCounter'] = value;
-        return '$key = @p$paramCounter';
+        params.add(value);
+        return '$key = @$paramCounter';
       } else {
-        throw new Exception('Unexpected branch in _processQueryNode');
+        throw new Exception('Unexpected branch in _processQueryNode valueType = $valueType value = $value');
       }
     }
   }
@@ -65,7 +66,16 @@ class SqlQueryBuilder {
     return 'SELECT Count(*) FROM "$tableName" $whereClause';
   }
 
-
+  String getUpdateSql(Map<String,dynamic> toUpdate) {
+    processQueryPart();
+    List<String> setOperations = [];
+    for (var key in toUpdate.keys) {
+      paramCounter++;
+      setOperations.add('$key = @$paramCounter');
+      params.add(toUpdate[key]);
+    }
+    return 'UPDATE "$tableName" SET ${setOperations.join(', ')} $whereClause';
+  }
 
   static String getInsertCommand(String tableName, Map content) {
     List<String> fieldNames = content.keys.toList();

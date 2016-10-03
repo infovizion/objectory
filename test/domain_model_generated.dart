@@ -11,13 +11,13 @@ class $User {
 class $UserTable {
   static Field get name =>
       const Field(id: 'name',label: '',title: '',
-          type: String,logChanges: false);
+          type: String,logChanges: false, foreignKey: false);
   static Field get email =>
       const Field(id: 'email',label: '',title: '',
-          type: String,logChanges: false);
+          type: String,logChanges: false, foreignKey: false);
   static Field get login =>
       const Field(id: 'login',label: '',title: '',
-          type: String,logChanges: false);
+          type: String,logChanges: false, foreignKey: false);
   static Map<String,Field> get fields =>
       {'name': name,'email': email,'login': login};
 }
@@ -45,16 +45,16 @@ class $Person {
 class $PersonTable {
   static Field get firstName =>
       const Field(id: 'firstName',label: '',title: '',
-          type: String,logChanges: true);
+          type: String,logChanges: true, foreignKey: false);
   static Field get lastName =>
       const Field(id: 'lastName',label: '',title: '',
-          type: String,logChanges: false);
+          type: String,logChanges: false, foreignKey: false);
   static Field get father =>
       const Field(id: 'father',label: '',title: '',
-          type: Person,logChanges: false);
+          type: Person,logChanges: false, foreignKey: true);
   static Field get mother =>
       const Field(id: 'mother',label: '',title: '',
-          type: Person,logChanges: false);
+          type: Person,logChanges: false, foreignKey: true);
   static Map<String,Field> get fields =>
       {'firstName': firstName,'lastName': lastName,'father': father,'mother': mother};
 }
@@ -83,13 +83,13 @@ class $Author {
 class $AuthorTable {
   static Field get name =>
       const Field(id: 'name',label: '',title: '',
-          type: String,logChanges: false);
+          type: String,logChanges: false, foreignKey: false);
   static Field get email =>
       const Field(id: 'email',label: '',title: '',
-          type: String,logChanges: false);
+          type: String,logChanges: false, foreignKey: false);
   static Field get age =>
       const Field(id: 'age',label: '',title: '',
-          type: int,logChanges: false);
+          type: int,logChanges: false, foreignKey: false);
   static Map<String,Field> get fields =>
       {'name': name,'email': email,'age': age};
 }

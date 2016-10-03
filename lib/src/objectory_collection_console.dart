@@ -42,7 +42,8 @@ class ObjectoryCollectionConsole extends ObjectoryCollection {
     List<Row> rows = await objectoryImpl.connection
         .query(command, sqlBuilder.params)
         .toList();
-    print(rows);
     return rows.first.toList().first;
   }
+
+
 }

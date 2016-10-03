@@ -100,7 +100,7 @@
 //          await db.collection(header.collection).insert(mapToSave);
 //      return sendResult(header, responseData);
 //    } else {
-//      var id = mapToSave['id'];
+//      int id = mapToSave['id'];
 //      if (id != null) {
 //        var responseData = await db
 //            .collection(header.collection)

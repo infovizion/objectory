@@ -117,7 +117,7 @@
 //    }
 //    else
 //    {
-//      var id = mapToSave['id'];
+//      int id = mapToSave['id'];
 //      if (id != null) {
 //        db.collection(header.collection).update({'id': id},mapToSave).then((responseData) {
 //          sendResult(header, responseData);

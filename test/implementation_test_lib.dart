@@ -10,12 +10,28 @@ allImplementationTests() {
   setUp(() async {
     await objectory.initDomainModel();
   });
-  test('simpleTestInsertionAndUpdate', () async {
+  test('Simple test for insert object', () async {
+    await objectory.truncate(Author);
+    Author author = new Author();
+    author.name = 'Dan';
+    author.age = 32;
+    author.email = 'who@cares.net';
+    await author.save();
+    expect(author.id, isNotNull);
+    Author authFromDb = await objectory[Author].findOne(where.id(author.id));
+    expect(authFromDb, isNotNull);
+    expect(authFromDb.age, 32);
+    objectory.close();
+  });
+
+  test('Insert object, then update it', () async {
+    await objectory.truncate(Author);
     Author author = new Author();
     author.name = 'Dan';
     author.age = 3;
     author.email = 'who@cares.net';
-    author.save();
+    await author.save();
+    expect(author.id, isNotNull);
     author.age = 4;
     await author.save();
     Author authFromDb = await objectory[Author].findOne(where.id(author.id));

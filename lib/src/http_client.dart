@@ -87,7 +87,7 @@ class ObjectoryHttpImpl extends Objectory {
   Map<int, Completer> awaitedRequests = new Map<int, Completer>();
   int requestId = 0;
   ObjectoryHttpImpl(this.objectoryServerUrl, Function registerClassesCallback, {bool dropCollectionsOnStartup: false})
-      : super('dummy', registerClassesCallback, dropCollectionsOnStartup);
+      : super('dummy', registerClassesCallback);
 
   Future open() async{
 
@@ -119,7 +119,7 @@ class ObjectoryHttpImpl extends Objectory {
 
   generateId() => new ObjectId(clientMode: true);
 
-  Future doUpdate(String collection, var id, Map toUpdate) {
+  Future doUpdate(String collection, int id, Map toUpdate) {
     assert(id.runtimeType == idType);
     return _postMessage(
         _createCommand('update', collection), toUpdate, {"id": id});

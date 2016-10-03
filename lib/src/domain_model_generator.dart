@@ -254,7 +254,7 @@ part of domain_model;
       output.write(
           "      const Field(id: '${propertyGenerator.name}',label: '${propertyGenerator.field.label}',title: '${propertyGenerator.field.title}',\n");
       output.write(
-          "          type: ${propertyGenerator.type},logChanges: ${propertyGenerator.field.logChanges});\n");
+          "          type: ${propertyGenerator.type},logChanges: ${propertyGenerator.field.logChanges}, foreignKey: ${propertyGenerator.propertyType == PropertyType.PERSISTENT_OBJECT});\n");
 
     });
     var fields = classGenerator.properties
@@ -333,7 +333,6 @@ class PropertyGenerator {
     vm.metadata.where((m) => m.reflectee is Field).forEach((m) {
       field = m.reflectee as Field;
     });
-
     Type t = vm.type.reflectedType;
     type = t;
     if (t == int || t == double || t == String || t == DateTime || t == bool) {

@@ -22,18 +22,18 @@ class ObjectoryCollection {
   String collectionName;
   Type classType;
   Future<PersistentObject> findOne([ObjectoryQueryBuilder selector]) {
-    throw new Exception('method findOne must be implemented');
+    throw new UnimplementedError();
   }
 
   Future<int> count([ObjectoryQueryBuilder selector]) {
-    throw new Exception('method count must be implemented');
+    throw new UnimplementedError();
   }
 
   Future<List<PersistentObject>> find([ObjectoryQueryBuilder selector]) {
-    throw new Exception('method find must be implemented');
+    throw new UnimplementedError();
   }
 
-  Future<PersistentObject> get(var id) {
+  Future<PersistentObject> get(int id) {
     assert(id.runtimeType == objectory.idType);
     return objectory.findInCacheOrGetProxy(id, this.classType).fetch();
   }
@@ -42,19 +42,19 @@ class ObjectoryCollection {
 class RawDbCollection {
   String collectionName;
   Future<Map> findOne([selector]) {
-    throw new Exception('method findOne must be implemented');
+    throw new UnimplementedError();
   }
 
   Future<int> count([selector]) {
-    throw new Exception('method count must be implemented');
+    throw new UnimplementedError();
   }
 
   Future<List<Map>> find([selector]) {
-    throw new Exception('method find must be implemented');
+    throw new UnimplementedError();
   }
 
   Future remove([selector]) {
-    throw new Exception('method find must be implemented');
+    throw new UnimplementedError();
   }
 }
 
@@ -67,7 +67,6 @@ class Objectory {
   String uri;
   String userName;
   Function registerClassesCallback;
-  bool dropCollectionsOnStartup;
   IdGenerator idGenerator = () => new ObjectId();
   Type idType = int;
   DataMapDecorator dataMapDecorator = (Map map) => map;
@@ -84,13 +83,13 @@ class Objectory {
   final Map<String, Type> _collectionNameToTypeMap = new Map<String, Type>();
   bool useFieldLevelUpdate = true;
   bool _isOpen = false;
-  bool saveAuditData = true;
-  Objectory(
-      this.uri, this.registerClassesCallback, this.dropCollectionsOnStartup);
+  bool saveAuditData = false;
+  Objectory(this.uri, this.registerClassesCallback);
   void clearCache(Type classType) {
     _cache[classType.toString()].clear();
   }
 
+  List<Type> get persistentTypes => _collections.keys.toList();
   void addToCache(PersistentObject obj) {
     _cache[obj.runtimeType.toString()][obj.id.toString()] = obj;
     obj.markAsFetched();
@@ -98,14 +97,14 @@ class Objectory {
 
   Type getClassTypeByCollection(String collectionName) =>
       _collectionNameToTypeMap[collectionName];
-  PersistentObject findInCache(Type classType, var id) {
+  PersistentObject findInCache(Type classType, int id) {
     if (id == null) {
       return null;
     }
     return _cache[classType.toString()][id.toString()];
   }
 
-  PersistentObject findInCacheOrGetProxy(var id, Type classType) {
+  PersistentObject findInCacheOrGetProxy(int id, Type classType) {
     if (id == null) {
       return null;
     }
@@ -125,9 +124,13 @@ class Objectory {
         'Class $classType have not been registered in Objectory');
   }
 
-  PersistentObject dbRef2Object(DbRef dbRef) {
-    return findInCacheOrGetProxy(
-        dbRef.id, objectory.getClassTypeByCollection(dbRef.collection));
+//  PersistentObject dbRef2Object(DbRef dbRef) {
+//    return findInCacheOrGetProxy(
+//        dbRef.id, objectory.getClassTypeByCollection(dbRef.collection));
+//  }
+
+  Future recreateSchema() {
+    throw new UnimplementedError();
   }
 
   BasePersistentObject map2Object(Type classType, Map map) {
@@ -153,14 +156,14 @@ class Objectory {
       .map((ObjectoryCollection oc) => oc.collectionName)
       .toList();
 
+  String tableName(Type type) =>
+      _collections[type].collectionName;
+
   Future save(PersistentObject persistentObject) async {
     var res;
     if (persistentObject.id != null) {
       res = await update(persistentObject);
     } else {
-      persistentObject.id = idGenerator();
-      persistentObject.map["id"] = persistentObject.id;
-      objectory.addToCache(persistentObject);
       res = await insert(persistentObject);
     }
     persistentObject.dirtyFields.clear();
@@ -185,11 +188,11 @@ class Objectory {
   }
 
   Future dropCollections() {
-    throw new Exception('Must be implemented');
+    throw new UnimplementedError();
   }
 
   Future open() {
-    throw new Exception('Must be implemented');
+    throw new UnimplementedError();
   }
 
   ObjectoryCollection constructCollection() => new ObjectoryCollection();
@@ -201,49 +204,54 @@ class Objectory {
   }
 
   Future insert(PersistentObject persistentObject) async {
-//    if (saveAuditData) {
-//      persistentObject.map['createdBy'] = userName;
-//      persistentObject.map['createdAt'] = new DateTime.now();
-//    }
-//    await saveObjectToHistory(persistentObject, 'i');
-    return doInsert(persistentObject.collectionName, persistentObject.map);
+    if (saveAuditData) {
+      persistentObject.map['createdBy'] = userName;
+      persistentObject.map['createdAt'] = new DateTime.now();
+      await saveObjectToHistory(persistentObject, 'i');
+    }
+    int newId =
+        await doInsert(persistentObject.collectionName, persistentObject.map);
+    persistentObject.id = newId;
+    objectory.addToCache(persistentObject);
+    return newId;
   }
 
-  Future doInsert(String collection, Map toUpdate) {
-    throw new Exception('Must be implemented');
+  Future<int> doInsert(String collection, Map toUpdate) {
+    throw new UnimplementedError();
   }
 
-  Future doUpdate(String collection, var id, Map toUpdate) {
-    throw new Exception('Must be implemented');
+  Future doUpdate(String collection, int id, Map toUpdate) {
+    throw new UnimplementedError();
   }
 
   Future<List<Map>> findRawObjects(String collectionName,
       [ObjectoryQueryBuilder selector]) {
-    throw new Exception('method findRawObjects must be implemented');
+    throw new UnimplementedError();
   }
 
   Future remove(BasePersistentObject persistentObject) {
-    throw new Exception('Must be implemented');
+    throw new UnimplementedError();
+  }
+
+  Future truncate(Type persistentType) {
+    throw new UnimplementedError();
   }
 
   Future<Map> dropDb() {
-    throw new Exception('Must be implemented');
+    throw new UnimplementedError();
   }
 
   Future<Map> wait() {
-    throw new Exception('Must be implemented');
+    throw new UnimplementedError();
   }
 
   close() async {
-    throw new Exception('Must be implemented');
+    throw new UnimplementedError();
   }
 
   Future initDomainModel() async {
     registerClassesCallback();
     await open();
-    if (dropCollectionsOnStartup) {
-      await objectory.dropCollections();
-    }
     _isOpen = true;
   }
 
@@ -254,7 +262,7 @@ class Objectory {
   }
 
   Future update(PersistentObject persistentObject) async {
-    var id = persistentObject.id;
+    int id = persistentObject.id;
     if (id == null) {
       return new Future.error(
           new Exception('Update operation on object with null id'));
@@ -317,7 +325,7 @@ class Objectory {
   Future<PersistentObject> fetchLinks(PersistentObject obj) async {
     var lt = _linkedTypes[obj.runtimeType];
     for (var propertyName in lt.keys) {
-      var id = obj.map[propertyName];
+      int id = obj.map[propertyName];
       assert(id == null || id.runtimeType == objectory.idType);
       if (id != null) {
         await findInCacheOrGetProxy(id, lt[propertyName]).fetch();
@@ -327,6 +335,9 @@ class Objectory {
   }
 
   Future saveObjectToHistory(PersistentObject obj, String operationType) async {
+    if (!saveAuditData) {
+      return;
+    }
     String historyCollectionName = obj.collectionName + 'History';
     Map toInsert = new Map.from(obj.map);
     var objectId = toInsert.remove('id');
@@ -358,13 +369,12 @@ class Objectory {
 
   Future<List<HistoryRecord>> getHistoryFor(PersistentObject object) async {
     var result = new List<HistoryRecord>();
-    var items =  await findRawObjects(object.collectionName + 'History',
+    var items = await findRawObjects(object.collectionName + 'History',
         where.eq('_originalObjectId', object.id).sortBy('modifiedAt'));
     var fields = object.$allFields;
     Map prevItem = {};
     for (Map item in items) {
-      var historyRecord =
-          getHistoryRecord(fields, item, prevItem);
+      var historyRecord = getHistoryRecord(fields, item, prevItem);
       if (historyRecord.content != '') {
         result.add(historyRecord);
       }

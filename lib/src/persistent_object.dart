@@ -5,7 +5,7 @@ import 'package:bson/bson.dart';
 import 'objectory_base.dart';
 import 'dart:async';
 import 'dart:collection';
-import 'package:quiver/core.dart';
+import 'field.dart';
 
 enum PropertyType {
   String,
@@ -168,7 +168,7 @@ class PersistentObject extends BasePersistentObject {
     assert(value == null || value.runtimeType == objectory.idType);
     map['id'] = value;
   }
-
+  Map<String,Field> get $fields => throw new Exception('Should be implemented');
   PersistentObject() : super() {
     _setMap(map);
   }

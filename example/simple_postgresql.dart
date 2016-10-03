@@ -10,47 +10,61 @@ main() async {
 
   String username = 'test';
   String password = 'test';
-  String database = 'test';
+  String database = 'objectory_test';
   String host = 'localhost';
   int port = 5432;
   String uri = 'postgres://$username:$password@$host:$port/$database';
-  objectory = new ObjectoryConsole(uri, registerClasses, false);
+  print('$uri');
+  objectory = new ObjectoryConsole(uri, registerClasses);
+  ObjectoryConsole objectoryConsole = objectory;
   await objectory.initDomainModel();
 
-//  var res = await connection.query('INSERT INTO "test" ("name") VALUES (\'second\') RETURNING "id"').toList();
+//  var res = await objectoryConsole.connection.query('SELECT * FROM "Author"  WHERE id = @p1', {'p1': 2}).toList();
 //  print(res);
+
+
+//  await objectoryConsole.createTable(Author);
+  await objectoryConsole.recreateSchema();
+//
+//
   Author author = new Author();
-  author.age = 141;
-  author.name = 'Vadim1';
-  await objectory.insert(author);
+  author.name = 'Dan';
+  author.age = 3;
+  author.email = 'who@cares.net';
+  //author.save();
+  await objectory.save(author);
 
-  List<Author> res = await objectory[Author].find();
-  for (var each in res) {
-    print(each.map);
-  }
+  print('author.id = ${author.id}');
+
+  author.age = 4;
+  await author.save();
 
 
-  int count = await objectory[Author].count();
 
-  print('Total count: $count');
-
+//  author.age = 4;
+//  await author.save();
+  Author authFromDb = await objectory[Author].findOne(where.id(author.id));
+  print(authFromDb.map);
   await objectory.close();
-//  var command = SqlQueryBuilder.getInsertCommand(author.collectionName, author.map);
-//  print(command);
-//  List<Row> res = await connection.query(command,author.map).toList();
 
-//  var map = (where
-//          .eq('www', 12)
-//          .eq('qqq', 'werwer')
-//          .or(where.ne('eee', 2))
-//          .sortBy('www'))
-//      .map;
-//  print(map);
-//  map = (where.id('123123')).map;
-//  print(map);
-//  var qb = new PgQueryBuilder(
-//      where.eq('www', 12).eq('qqq', 'werwer').or(where.eq('eee', 2)));
-//  qb.processQueryPart();
-//  print(qb.whereClause);
-//  print(qb.params);
+
+
+//  Author author = new Author();
+//  author.age = 141;
+//  author.name = 'Vadim1';
+//  await objectory.insert(author);
+//
+//  List<Author> res = await objectory[Author].find();
+//  for (var each in res) {
+//    print(each.map);
+//  }
+//
+//
+//  int count = await objectory[Author].count();
+//
+//  print('Total count: $count');
+//
+//  await objectory.close();
+
+
 }
