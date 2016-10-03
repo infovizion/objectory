@@ -14,7 +14,7 @@ main() async {
   String host = 'localhost';
   int port = 5432;
   String uri = 'postgres://$username:$password@$host:$port/$database';
-  objectory = new ObjectoryDirectConnectionImpl(uri, registerClasses, false);
+  objectory = new ObjectoryConsole(uri, registerClasses, false);
   await objectory.initDomainModel();
 
 //  var res = await connection.query('INSERT INTO "test" ("name") VALUES (\'second\') RETURNING "id"').toList();
@@ -23,6 +23,17 @@ main() async {
   author.age = 141;
   author.name = 'Vadim1';
   await objectory.insert(author);
+
+  List<Author> res = await objectory[Author].find();
+  for (var each in res) {
+    print(each.map);
+  }
+
+
+  int count = await objectory[Author].count();
+
+  print('Total count: $count');
+
   await objectory.close();
 //  var command = SqlQueryBuilder.getInsertCommand(author.collectionName, author.map);
 //  print(command);

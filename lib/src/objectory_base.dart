@@ -69,7 +69,7 @@ class Objectory {
   Function registerClassesCallback;
   bool dropCollectionsOnStartup;
   IdGenerator idGenerator = () => new ObjectId();
-  Type idType = ObjectId;
+  Type idType = int;
   DataMapDecorator dataMapDecorator = (Map map) => map;
   DataListDecorator dataListDecorator = (List list) => list;
   final Map<String, Map<String, BasePersistentObject>> _cache =

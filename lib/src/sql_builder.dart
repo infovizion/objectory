@@ -3,12 +3,16 @@ import 'persistent_object.dart';
 
 class SqlQueryBuilder {
   ObjectoryQueryBuilder parent;
+  String tableName;
   String whereClause = '';
   Map<String, dynamic> params = {};
   int paramCounter = 0;
-  SqlQueryBuilder(this.parent);
+  SqlQueryBuilder(this.tableName,this.parent);
 
   processQueryPart() {
+    if (parent == null) {
+      return;
+    }
     Map sourceQuery = parent.map[r'$query'];
     if (sourceQuery == null) {
       return;
@@ -51,6 +55,18 @@ class SqlQueryBuilder {
       }
     }
   }
+  String getQuerySql() {
+    processQueryPart();
+    return 'SELECT * FROM "$tableName" $whereClause';
+  }
+
+  String getQueryCountSql() {
+    processQueryPart();
+    return 'SELECT Count(*) FROM "$tableName" $whereClause';
+  }
+
+
+
   static String getInsertCommand(String tableName, Map content) {
     List<String> fieldNames = content.keys.toList();
     fieldNames.remove('id');
@@ -65,19 +81,3 @@ class SqlQueryBuilder {
 
 }
 
-class SqlInsertBuilder {
-  PersistentObject po;
-  String insertCommand = '';
-  SqlInsertBuilder(this.po);
-  String getSqlCommand() {
-    List<String> fieldNames = po.map.keys.toList();
-    fieldNames.remove('id');
-    List<String> paramNames = fieldNames.map((el)=> '@$el').toList();
-    return '''
-    INSERT INTO "${po.collectionName}"
-      (${fieldNames.join(',')})
-      VALUES (${paramNames.join(',')})
-        RETURNING "id"
-   ''';
-  }
-}
