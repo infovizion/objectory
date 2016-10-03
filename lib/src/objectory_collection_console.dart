@@ -21,13 +21,18 @@ class ObjectoryCollectionConsole extends ObjectoryCollection {
       PersistentObject obj = objectory.map2Object(classType, row.toMap());
       result.add(obj);
     });
-    if (selector != null && !selector.paramFetchLinks) {
+    if (selector != null && selector.paramFetchLinks) {
       await Future.wait(result.map((item) => item.fetchLinks()));
     }
     return result;
   }
 
   Future<PersistentObject> findOne([ObjectoryQueryBuilder selector]) async {
+    var localSelector = selector;
+    if (localSelector == null) {
+      localSelector = new ObjectoryQueryBuilder();
+    }
+    localSelector.limit(1);
     List<PersistentObject> pl = await find(selector);
     if (pl.isEmpty) {
       return null;
@@ -44,6 +49,4 @@ class ObjectoryCollectionConsole extends ObjectoryCollection {
         .toList();
     return rows.first.toList().first;
   }
-
-
 }

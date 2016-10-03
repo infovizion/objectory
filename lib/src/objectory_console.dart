@@ -126,6 +126,15 @@ class ObjectoryConsole extends Objectory {
     return connection.execute(command, builder.params);
   }
 
+  Future remove(PersistentObject persistentObject) async {
+    var builder =
+    new SqlQueryBuilder(persistentObject.collectionName, new ObjectoryQueryBuilder().id(persistentObject.id));
+    String command = builder.getDeleteSql();
+    return connection.execute(command, builder.params);
+  }
+
+
+
 //  Future<List<Map>> findRawObjects(String tableName, [ObjectoryQueryBuilder selector]) async
 //  => await db.collection(tableName).find(selector).toList();
 

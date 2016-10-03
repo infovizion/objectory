@@ -1,6 +1,6 @@
 //import 'package:postgresql/postgresql.dart';
 //import 'package:objectory/objectory.dart';
-//import 'package:objectory/src/sql_builder.dart';
+import 'package:objectory/src/sql_builder.dart';
 import 'package:objectory/objectory_console.dart';
 import 'domain_model/domain_model.dart';
 
@@ -24,30 +24,44 @@ main() async {
 
 
 //  await objectoryConsole.createTable(Author);
-  await objectoryConsole.recreateSchema();
+  //await objectoryConsole.recreateSchema();
 //
 //
-  Author author = new Author();
-  author.name = 'Dan';
-  author.age = 3;
-  author.email = 'who@cares.net';
-  //author.save();
-  await objectory.save(author);
 
-  print('author.id = ${author.id}');
-
-  author.age = 4;
-  await author.save();
+//  var builder =  new SqlQueryBuilder('Person',where.match($Person.firstName, '^niCk.*y\$', caseInsensitive: true));
+//
+//
+//  print(builder.getQuerySql());
+//  print(builder.params);
 
 
 
-//  author.age = 4;
-//  await author.save();
-  Author authFromDb = await objectory[Author].findOne(where.id(author.id));
-  print(authFromDb.map);
-  await objectory.close();
+//  await objectory.truncate(Person);
+//  var person = new Person();
+//  person.firstName = 'Daniil';
+//  await person.save();
+//
+//  print(await objectory[Person].find());
+////  person = new Person();
+////  person.firstName = 'Vadim';
+////  await person.save();
+////  person = new Person();
+////  person.firstName = 'Nickolay';
+////  await person.save();
+////  var coll = await objectory[Person].find();
+//  objectory.close();
 
+  await objectory.truncate(Person);
+  Person father = new Person()..firstName = 'Vadim';
+  await father.save();
+  Person son = new Person()..firstName = 'Nick'..father=father;
+  await son.save();
+  int sonId = son.id;
+  objectory.clearCache(Person);
 
+  Person sonFromDb = await objectory[Person].findOne(where.id(sonId));
+
+  print(sonFromDb.father);
 
 //  Author author = new Author();
 //  author.age = 141;

@@ -5,6 +5,8 @@ class SqlQueryBuilder {
   ObjectoryQueryBuilder parent;
   String tableName;
   String whereClause = '';
+  String limitClause = '';
+  String skipClause = '';
   List params = [];
   List paramPlaceholders = [];
   int paramCounter = -1;
@@ -50,7 +52,7 @@ class SqlQueryBuilder {
           valueType == bool) {
         paramCounter++;
         params.add(value);
-        return '$key = @$paramCounter';
+        return '"$key" = @$paramCounter';
       } else {
         throw new Exception('Unexpected branch in _processQueryNode valueType = $valueType value = $value');
       }
@@ -58,8 +60,23 @@ class SqlQueryBuilder {
   }
   String getQuerySql() {
     processQueryPart();
-    return 'SELECT * FROM "$tableName" $whereClause';
+    if (parent != null) {
+      if (parent.paramLimit != 0) {
+        limitClause = ' LIMIT  ${parent.paramLimit}';
+      }
+      if (parent.paramSkip != 0) {
+        skipClause = ' OFFSET  ${parent.paramSkip}';
+      }
+    }
+
+    return 'SELECT * FROM "$tableName" $whereClause $limitClause $skipClause';
   }
+
+  String getDeleteSql() {
+    processQueryPart();
+    return 'DELETE FROM "$tableName" $whereClause';
+  }
+
 
   String getQueryCountSql() {
     processQueryPart();
@@ -71,7 +88,7 @@ class SqlQueryBuilder {
     List<String> setOperations = [];
     for (var key in toUpdate.keys) {
       paramCounter++;
-      setOperations.add('$key = @$paramCounter');
+      setOperations.add('"$key" = @$paramCounter');
       params.add(toUpdate[key]);
     }
     return 'UPDATE "$tableName" SET ${setOperations.join(', ')} $whereClause';
@@ -83,7 +100,7 @@ class SqlQueryBuilder {
     List<String> paramNames = fieldNames.map((el)=> '@$el').toList();
     return '''
     INSERT INTO "${tableName}"
-      (${fieldNames.join(',')})
+      (${fieldNames.map((el)=>'"$el"').join(',')})
       VALUES (${paramNames.join(',')})
         RETURNING "id"
    ''';

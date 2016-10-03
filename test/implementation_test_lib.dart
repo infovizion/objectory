@@ -40,6 +40,7 @@ allImplementationTests() {
     objectory.close();
   });
   test('simpleTestInsertAndRemove', () async {
+    await objectory.truncate(Author);
     Author author;
     author = new Author();
     author.name = 'Dan';
@@ -55,6 +56,7 @@ allImplementationTests() {
     objectory.close();
   });
   test('testInsertionAndUpdate', () async {
+    await objectory.truncate(Author);
     Author author = new Author();
     author.name = 'Dan';
     author.age = 3;
@@ -69,11 +71,12 @@ allImplementationTests() {
     await objectory.close();
   });
   test('testSaveWithoutChanges', () async {
+    await objectory.truncate(Author);
     Author author = new Author();
     author.name = 'Dan';
     author.age = 3;
     author.email = 'who@cares.net';
-    author.save();
+    await author.save();
     author.age = 4;
     await author.save();
     var coll = await objectory[Author].find();
@@ -87,27 +90,27 @@ allImplementationTests() {
     expect(author1.email, 'who@cares.net');
     await objectory.close();
   });
-  test('testMatch', () async {
-    await objectory.initDomainModel();
-    var person = new Person();
-    person.firstName = 'Daniil';
-    person.save();
-    person = new Person();
-    person.firstName = 'Vadim';
-    person.save();
-    person = new Person();
-    person.firstName = 'Nickolay';
-    await person.save();
-    var coll = await objectory[Person].find(
-        where.match($Person.firstName, '^niCk.*y\$', caseInsensitive: true));
-    expect(coll.length, 1);
-    Person personFromMongo = coll[0];
-    expect(personFromMongo.firstName, 'Nickolay');
-    objectory.close();
-  });
+//  test('testMatch', () async {
+//    await objectory.truncate(Person);
+//    var person = new Person();
+//    person.firstName = 'Daniil';
+//    person.save();
+//    person = new Person();
+//    person.firstName = 'Vadim';
+//    person.save();
+//    person = new Person();
+//    person.firstName = 'Nickolay';
+//    await person.save();
+//    var coll = await objectory[Person].find(
+//        where.match($Person.firstName, '^niCk.*y\$', caseInsensitive: true));
+//    expect(coll.length, 1);
+//    Person personFromMongo = coll[0];
+//    expect(personFromMongo.firstName, 'Nickolay');
+//    objectory.close();
+//  });
 
   test('tesFindWithoutParams', () async {
-    await objectory.initDomainModel();
+    await objectory.truncate(Person);
     var person = new Person();
     person.firstName = 'Daniil';
     person.save();
@@ -122,13 +125,12 @@ allImplementationTests() {
     objectory.close();
   });
   test('testLimit', () async {
-    await objectory.initDomainModel();
+    await objectory.truncate(Author);
     for (int n = 0; n < 30; n++) {
       Author author = new Author();
       author.age = n;
       await author.save();
     }
-    await objectory.wait();
     var coll = await objectory[Author].find(where.skip(20).limit(10));
     expect(coll.length, 10);
     Author authFromMongo = coll[0];
@@ -136,17 +138,48 @@ allImplementationTests() {
     await objectory.close();
   });
   test('testCount', () async {
+    await objectory.truncate(Author);
+
     for (int n = 0; n < 27; n++) {
       Author author = new Author();
       author.age = n;
       await author.save();
     }
-    await objectory.wait();
     var _count = await objectory[Author].count();
     expect(_count, 27);
     await objectory.close();
   });
-  test('testFindWithFetchLinksMode', () async {
+
+  test('findOne should not get object from cache', () async {
+    await objectory.truncate(Author);
+      Author author = new Author();
+      author.id = 233;
+      objectory.addToCache(author);
+      author = await objectory[Author].findOne(where.id(author.id));
+      expect(author, isNull);
+      objectory.close();
+  });
+
+
+  test('find with fetchLinks mode', () async {
+    await objectory.truncate(Person);
+    Person father = new Person()..firstName = 'Vadim';
+    await father.save();
+    Person son = new Person()..firstName = 'Nick'..father=father;
+    await son.save();
+    int sonId = son.id;
+
+    objectory.clearCache(Person);
+    Person sonFromDb = await objectory[Person].findOne(where.id(sonId));
+    expect(sonFromDb.firstName, 'Nick');
+    expect(sonFromDb.father.id, isNotNull);
+    expect(sonFromDb.father.firstName, isNull);
+    objectory.clearCache(Person);
+    sonFromDb = await objectory[Person].findOne(where.id(sonId).fetchLinks());
+    expect(sonFromDb.firstName, 'Nick');
+    expect(sonFromDb.father.id, isNotNull);
+    expect(sonFromDb.father.firstName, 'Vadim');
+
 //    return objectory.initDomainModel().then((_) {
 //      _setupArticle(objectory);
 //      return objectory[Article].find(where.sortBy($Article.title).fetchLinks());
@@ -157,19 +190,7 @@ allImplementationTests() {
 //      expect(artcl.author.name, 'VADIM');
 //      objectory.close();
 //    });
-  }, skip: 'Not implemented yet in new version');
-//  test('testFindOneDontGetObjectFromCache', () async {
-//    return objectory.initDomainModel().then((_) {
-//      var article = new Article();
-//      article.id = new ObjectId();
-//      objectory.addToCache(article);
-//      return objectory[Article].findOne(where.id(article.id));
-//    }).then((artcl) {
-//      expect(artcl, isNull);
-//      objectory.close();
-//    });
-//
-//  });
+  });
   test('testCollectionGet', () async {
     await objectory.initDomainModel();
     var person = new Person();
