@@ -57,7 +57,7 @@ part of domain_model;
   void generateOutput(
       {bool header: true,
       bool persistentClasses: true,
-      bool schemaClasses: true,
+      bool schemaClasses: false,
       bool register: true}) {
     if (header) {
       output.write(HEADER);
@@ -247,7 +247,7 @@ part of domain_model;
   }
 
   void generateOuputForTableClass(ClassGenerator classGenerator) {
-    output.write('class \$${classGenerator.type}Table {\n');
+    output.write('class \$${classGenerator.type} {\n');
     classGenerator.properties.forEach((propertyGenerator) {
       output.write(
           "  static Field get ${propertyGenerator.name} =>\n");

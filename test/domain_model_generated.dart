@@ -2,13 +2,6 @@
 part of domain_model;
 
 class $User {
-  static String get name => 'name';
-  static String get email => 'email';
-  static String get login => 'login';
-  static final List<String> allFields = [name, email, login];
-}
-
-class $UserTable {
   static Field get name =>
       const Field(id: 'name',label: '',title: '',
           type: String,logChanges: false, foreignKey: false);
@@ -35,14 +28,6 @@ class User extends PersistentObject {
 }
 
 class $Person {
-  static String get firstName => 'firstName';
-  static String get lastName => 'lastName';
-  static String get father => 'father';
-  static String get mother => 'mother';
-  static final List<String> allFields = [firstName, lastName, father, mother];
-}
-
-class $PersonTable {
   static Field get firstName =>
       const Field(id: 'firstName',label: '',title: '',
           type: String,logChanges: true, foreignKey: false);
@@ -74,13 +59,6 @@ class Person extends PersistentObject {
 }
 
 class $Author {
-  static String get name => 'name';
-  static String get email => 'email';
-  static String get age => 'age';
-  static final List<String> allFields = [name, email, age];
-}
-
-class $AuthorTable {
   static Field get name =>
       const Field(id: 'name',label: '',title: '',
           type: String,logChanges: false, foreignKey: false);
@@ -118,17 +96,17 @@ registerClasses() {
 CREATE SEQUENCE "User_id_seq"  INCREMENT 1  MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
 CREATE TABLE "User" (
   "id" integer NOT NULL DEFAULT nextval('"User_id_seq"'::regclass),
-  "name" character varying(255),
-  "email" character varying(255),
-  "login" character varying(255),
+  "name" CHARACTER VARYING (255) NOT NULL DEFAULT ,
+  "email" CHARACTER VARYING (255) NOT NULL DEFAULT ,
+  "login" CHARACTER VARYING (255) NOT NULL DEFAULT ,
   CONSTRAINT "User_px" PRIMARY KEY ("id")
 );
 
 CREATE SEQUENCE "Person_id_seq"  INCREMENT 1  MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
 CREATE TABLE "Person" (
   "id" integer NOT NULL DEFAULT nextval('"Person_id_seq"'::regclass),
-  "firstName" character varying(255),
-  "lastName" character varying(255),
+  "firstName" CHARACTER VARYING (255) NOT NULL DEFAULT ,
+  "lastName" CHARACTER VARYING (255) NOT NULL DEFAULT ,
   "father" character varying(255),
   "mother" character varying(255),
   CONSTRAINT "Person_px" PRIMARY KEY ("id")
@@ -137,8 +115,8 @@ CREATE TABLE "Person" (
 CREATE SEQUENCE "Author_id_seq"  INCREMENT 1  MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
 CREATE TABLE "Author" (
   "id" integer NOT NULL DEFAULT nextval('"Author_id_seq"'::regclass),
-  "name" character varying(255),
-  "email" character varying(255),
+  "name" CHARACTER VARYING (255) NOT NULL DEFAULT ,
+  "email" CHARACTER VARYING (255) NOT NULL DEFAULT ,
   "age" integer,
   CONSTRAINT "Author_px" PRIMARY KEY ("id")
 );
