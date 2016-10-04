@@ -6,7 +6,10 @@ import 'domain_model/domain_model.dart';
 
 
 main() async {
+  print(where.id(12).ne('name','asd').or(where.ne('flag',12)));
 
+
+  return;
 
   String username = 'test';
   String password = 'test';
@@ -18,7 +21,7 @@ main() async {
   objectory = new ObjectoryConsole(uri, registerClasses);
   ObjectoryConsole objectoryConsole = objectory;
   await objectory.initDomainModel();
-
+  await objectoryConsole.recreateSchema();
 //  var res = await objectoryConsole.connection.query('SELECT * FROM "Author"  WHERE id = @p1', {'p1': 2}).toList();
 //  print(res);
 
@@ -62,6 +65,7 @@ main() async {
   Person sonFromDb = await objectory[Person].findOne(where.id(sonId));
 
   print(sonFromDb.father);
+  objectory.close();
 
 //  Author author = new Author();
 //  author.age = 141;

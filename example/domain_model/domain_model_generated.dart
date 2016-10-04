@@ -118,17 +118,17 @@ registerClasses() {
 CREATE SEQUENCE "User_id_seq"  INCREMENT 1  MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
 CREATE TABLE "User" (
   "id" integer NOT NULL DEFAULT nextval('"User_id_seq"'::regclass),
-  "name" character varying(255),
-  "email" character varying(255),
-  "login" character varying(255),
+  "name" CHARACTER VARYING (255) NOT NULL DEFAULT ,
+  "email" CHARACTER VARYING (255) NOT NULL DEFAULT ,
+  "login" CHARACTER VARYING (255) NOT NULL DEFAULT ,
   CONSTRAINT "User_px" PRIMARY KEY ("id")
 );
 
 CREATE SEQUENCE "Person_id_seq"  INCREMENT 1  MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
 CREATE TABLE "Person" (
   "id" integer NOT NULL DEFAULT nextval('"Person_id_seq"'::regclass),
-  "firstName" character varying(255),
-  "lastName" character varying(255),
+  "firstName" CHARACTER VARYING (255) NOT NULL DEFAULT ,
+  "lastName" CHARACTER VARYING (255) NOT NULL DEFAULT ,
   "father" character varying(255),
   "mother" character varying(255),
   CONSTRAINT "Person_px" PRIMARY KEY ("id")
@@ -137,8 +137,8 @@ CREATE TABLE "Person" (
 CREATE SEQUENCE "Author_id_seq"  INCREMENT 1  MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
 CREATE TABLE "Author" (
   "id" integer NOT NULL DEFAULT nextval('"Author_id_seq"'::regclass),
-  "name" character varying(255),
-  "email" character varying(255),
+  "name" CHARACTER VARYING (255) NOT NULL DEFAULT ,
+  "email" CHARACTER VARYING (255) NOT NULL DEFAULT ,
   "age" integer,
   CONSTRAINT "Author_px" PRIMARY KEY ("id")
 );

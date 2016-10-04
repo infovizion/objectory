@@ -1,8 +1,8 @@
-import 'objectory_query_builder.dart';
+import 'query_builder.dart';
 import 'persistent_object.dart';
 
 class SqlQueryBuilder {
-  ObjectoryQueryBuilder parent;
+  QueryBuilder parent;
   String tableName;
   String whereClause = '';
   String limitClause = '';
@@ -10,7 +10,7 @@ class SqlQueryBuilder {
   List params = [];
   List paramPlaceholders = [];
   int paramCounter = -1;
-  SqlQueryBuilder(this.tableName,this.parent);
+  SqlQueryBuilder(this.tableName, this.parent);
 
   processQueryPart() {
     if (parent == null) {
@@ -29,14 +29,14 @@ class SqlQueryBuilder {
           'Unexpected query structure at $query. Whole query: ${parent.map[r"$query"]}');
     }
     var key = query.keys.first;
-    if (key == r'$and') {
+    if (key == 'AND') {
       List<Map> subComponents = query[key];
       return '(' +
           subComponents
               .map((Map subQuery) => _processQueryNode(subQuery))
               .join(' AND ') +
           ')';
-    } else if (key == r'$or') {
+    } else if (key == 'OR') {
       List<Map> subComponents = query[key];
       return '(' +
           subComponents
@@ -44,20 +44,39 @@ class SqlQueryBuilder {
               .join(' OR ') +
           ')';
     } else {
-      var value = query[key];
-      Type valueType = value.runtimeType;
-      if (valueType == String ||
-          value is num ||
-          valueType == DateTime ||
-          valueType == bool) {
-        paramCounter++;
-        params.add(value);
-        return '"$key" = @$paramCounter';
-      } else {
-        throw new Exception('Unexpected branch in _processQueryNode valueType = $valueType value = $value');
+      Map<String, dynamic> expressionMap = query[key];
+      paramCounter++;
+      if (expressionMap.length == 1) {
+        params.add(expressionMap.values.first);
+        return '"$key" ${expressionMap.keys.first} @$paramCounter';
+      } else if (expressionMap.length == 2) {
+        String like = expressionMap['LIKE'];
+        if (like != null) {
+          if (expressionMap['caseInsensitive'] == true) {
+            params.add(like);
+            return 'UPPER("$key") LIKE UPPER(@$paramCounter)';
+          } else {
+            params.add(like);
+            return '"$key" LIKE @$paramCounter';
+          }
+        }
+        List oneFromList = expressionMap['IN'];
+        if (oneFromList != null) {
+          List<String> subQuery = [];
+          for (var each in oneFromList) {
+            params.add(each);
+            subQuery.add('"$key" = (@$paramCounter)');
+            paramCounter++;
+          }
+
+          return '(${subQuery.join(' OR ')})';
+        }
       }
     }
+    throw new Exception(
+        'Unexpected branch in _processQueryNode expression = ${query}');
   }
+
   String getQuerySql() {
     processQueryPart();
     if (parent != null) {
@@ -77,13 +96,12 @@ class SqlQueryBuilder {
     return 'DELETE FROM "$tableName" $whereClause';
   }
 
-
   String getQueryCountSql() {
     processQueryPart();
     return 'SELECT Count(*) FROM "$tableName" $whereClause';
   }
 
-  String getUpdateSql(Map<String,dynamic> toUpdate) {
+  String getUpdateSql(Map<String, dynamic> toUpdate) {
     processQueryPart();
     List<String> setOperations = [];
     for (var key in toUpdate.keys) {
@@ -97,7 +115,7 @@ class SqlQueryBuilder {
   static String getInsertCommand(String tableName, Map content) {
     List<String> fieldNames = content.keys.toList();
     fieldNames.remove('id');
-    List<String> paramNames = fieldNames.map((el)=> '@$el').toList();
+    List<String> paramNames = fieldNames.map((el) => '@$el').toList();
     return '''
     INSERT INTO "${tableName}"
       (${fieldNames.map((el)=>'"$el"').join(',')})
@@ -105,6 +123,4 @@ class SqlQueryBuilder {
         RETURNING "id"
    ''';
   }
-
 }
-

@@ -10,6 +10,9 @@ allImplementationTests() {
   setUp(() async {
     await objectory.initDomainModel();
   });
+  tearDown(()async{
+    await objectory.close();
+  });
   test('Simple test for insert object', () async {
     await objectory.truncate(Author);
     Author author = new Author();
@@ -21,7 +24,7 @@ allImplementationTests() {
     Author authFromDb = await objectory[Author].findOne(where.id(author.id));
     expect(authFromDb, isNotNull);
     expect(authFromDb.age, 32);
-    objectory.close();
+
   });
 
   test('Insert object, then update it', () async {
@@ -37,7 +40,7 @@ allImplementationTests() {
     Author authFromDb = await objectory[Author].findOne(where.id(author.id));
     expect(authFromDb, isNotNull);
     expect(authFromDb.age, 4);
-    objectory.close();
+
   });
   test('simpleTestInsertAndRemove', () async {
     await objectory.truncate(Author);
@@ -53,7 +56,7 @@ allImplementationTests() {
     await authFromDb.remove();
     authFromDb = await objectory[Author].findOne(where.id(author.id));
     expect(authFromDb, isNull);
-    objectory.close();
+
   });
   test('testInsertionAndUpdate', () async {
     await objectory.truncate(Author);
@@ -66,9 +69,9 @@ allImplementationTests() {
     await author.save();
     var coll = await objectory[Author].find();
     expect(coll.length, 1);
-    Author authFromMongo = coll[0];
-    expect(authFromMongo.age, 4);
-    await objectory.close();
+    Author authFromPg = coll[0];
+    expect(authFromPg.age, 4);
+
   });
   test('testSaveWithoutChanges', () async {
     await objectory.truncate(Author);
@@ -81,33 +84,33 @@ allImplementationTests() {
     await author.save();
     var coll = await objectory[Author].find();
     expect(coll.length, 1);
-    Author authFromMongo = coll[0];
-    expect(authFromMongo.age, 4);
-    authFromMongo.save();
-    var author1 = await objectory[Author].findOne(where.id(authFromMongo.id));
+    Author authFromPg = coll[0];
+    expect(authFromPg.age, 4);
+    authFromPg.save();
+    var author1 = await objectory[Author].findOne(where.id(authFromPg.id));
     expect(author1.age, 4);
     expect(author1.name, 'Dan'); // Converted to uppecase in setter
     expect(author1.email, 'who@cares.net');
-    await objectory.close();
+
   });
-//  test('testMatch', () async {
-//    await objectory.truncate(Person);
-//    var person = new Person();
-//    person.firstName = 'Daniil';
-//    person.save();
-//    person = new Person();
-//    person.firstName = 'Vadim';
-//    person.save();
-//    person = new Person();
-//    person.firstName = 'Nickolay';
-//    await person.save();
-//    var coll = await objectory[Person].find(
-//        where.match($Person.firstName, '^niCk.*y\$', caseInsensitive: true));
-//    expect(coll.length, 1);
-//    Person personFromMongo = coll[0];
-//    expect(personFromMongo.firstName, 'Nickolay');
-//    objectory.close();
-//  });
+  test('Like ', () async {
+    await objectory.truncate(Person);
+    var person = new Person();
+    person.firstName = 'Daniil';
+    person.save();
+    person = new Person();
+    person.firstName = 'Vadim';
+    person.save();
+    person = new Person();
+    person.firstName = 'Nickolay';
+    await person.save();
+    var coll = await objectory[Person]
+        .find(where.like($Person.firstName, 'niCk%y', caseInsensitive: true));
+    expect(coll.length, 1);
+    Person personFromPg = coll[0];
+    expect(personFromPg.firstName, 'Nickolay');
+
+  });
 
   test('tesFindWithoutParams', () async {
     await objectory.truncate(Person);
@@ -122,7 +125,7 @@ allImplementationTests() {
     await person.save();
     var coll = await objectory[Person].find();
     expect(coll.length, 3);
-    objectory.close();
+
   });
   test('testLimit', () async {
     await objectory.truncate(Author);
@@ -133,9 +136,9 @@ allImplementationTests() {
     }
     var coll = await objectory[Author].find(where.skip(20).limit(10));
     expect(coll.length, 10);
-    Author authFromMongo = coll[0];
-    expect(authFromMongo.age, 20);
-    await objectory.close();
+    Author authFromPg = coll[0];
+    expect(authFromPg.age, 20);
+
   });
   test('testCount', () async {
     await objectory.truncate(Author);
@@ -147,25 +150,26 @@ allImplementationTests() {
     }
     var _count = await objectory[Author].count();
     expect(_count, 27);
-    await objectory.close();
+
   });
 
   test('findOne should not get object from cache', () async {
     await objectory.truncate(Author);
-      Author author = new Author();
-      author.id = 233;
-      objectory.addToCache(author);
-      author = await objectory[Author].findOne(where.id(author.id));
-      expect(author, isNull);
-      objectory.close();
-  });
+    Author author = new Author();
+    author.id = 233;
+    objectory.addToCache(author);
+    author = await objectory[Author].findOne(where.id(author.id));
+    expect(author, isNull);
 
+  });
 
   test('find with fetchLinks mode', () async {
     await objectory.truncate(Person);
     Person father = new Person()..firstName = 'Vadim';
     await father.save();
-    Person son = new Person()..firstName = 'Nick'..father=father;
+    Person son = new Person()
+      ..firstName = 'Nick'
+      ..father = father;
     await son.save();
     int sonId = son.id;
 
@@ -192,7 +196,6 @@ allImplementationTests() {
 //    });
   });
   test('testCollectionGet', () async {
-    await objectory.initDomainModel();
     var person = new Person();
     person.firstName = '111';
     person.lastName = 'initial setup';
@@ -211,6 +214,30 @@ allImplementationTests() {
     expect(person.lastName, 'unsaved changes',
         reason:
             'Collection get method should get objects from objectory cache');
-    objectory.close();
+
   });
+
+  test('< OR >', () async {
+    await objectory.truncate(Author);
+    for (int n = 1; n <= 20; n++) {
+      var auth = new Author();
+      auth.name = 'a$n';
+      auth.age = n;
+      await objectory.save(auth);
+    }
+    int count = await objectory[Author].count(where.lte($Author.age, 5).or(where.gt($Author.age, 15)));
+    expect(count, 10);
+  });
+  test('oneFrom', () async {
+    await objectory.truncate(Author);
+    for (int n = 1; n <= 20; n++) {
+      var auth = new Author();
+      auth.name = 'a$n';
+      auth.age = n;
+      await objectory.save(auth);
+    }
+    int count = await objectory[Author].count(where.oneFrom($Author.age,[12, 19, 29]));
+    expect(count, 2);
+  });
+
 }

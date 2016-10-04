@@ -35,6 +35,7 @@ class Person {
 //  List<Person> children;
 }
 
+
 main() {
   new ModelGenerator(#domain_model_proto)
       .generateTo('domain_model_generated.dart');

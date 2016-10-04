@@ -1,7 +1,7 @@
 library objectory_base;
 
 import 'persistent_object.dart';
-import 'objectory_query_builder.dart';
+import 'query_builder.dart';
 import 'dart:collection';
 import 'dart:async';
 import 'package:bson/bson.dart';
@@ -21,15 +21,15 @@ class HistoryRecord {
 class ObjectoryCollection {
   String collectionName;
   Type classType;
-  Future<PersistentObject> findOne([ObjectoryQueryBuilder selector]) {
+  Future<PersistentObject> findOne([QueryBuilder selector]) {
     throw new UnimplementedError();
   }
 
-  Future<int> count([ObjectoryQueryBuilder selector]) {
+  Future<int> count([QueryBuilder selector]) {
     throw new UnimplementedError();
   }
 
-  Future<List<PersistentObject>> find([ObjectoryQueryBuilder selector]) {
+  Future<List<PersistentObject>> find([QueryBuilder selector]) {
     throw new UnimplementedError();
   }
 
@@ -225,7 +225,7 @@ class Objectory {
   }
 
   Future<List<Map>> findRawObjects(String collectionName,
-      [ObjectoryQueryBuilder selector]) {
+      [QueryBuilder selector]) {
     throw new UnimplementedError();
   }
 
@@ -278,7 +278,7 @@ class Objectory {
     return doUpdate(persistentObject.collectionName, id, toUpdate);
   }
 
-  completeFindOne(Map map, Completer completer, ObjectoryQueryBuilder selector,
+  completeFindOne(Map map, Completer completer, QueryBuilder selector,
       Type classType) {
     var obj;
     if (map == null) {

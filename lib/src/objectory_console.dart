@@ -4,7 +4,7 @@ import 'package:postgresql/postgresql.dart';
 import 'sql_builder.dart';
 import 'dart:async';
 import 'persistent_object.dart';
-import 'objectory_query_builder.dart';
+import 'query_builder.dart';
 import 'objectory_base.dart';
 import 'objectory_collection_console.dart';
 import 'field.dart';
@@ -67,17 +67,17 @@ class ObjectoryConsole extends Objectory {
   void _outputField(Field field, StringBuffer output) {
     output.write('  "${field.id}" ');
     if (field.foreignKey) {
-      output.write('integer,\n');
+      output.write('INTEGER NOT NULL DEFAULT 0,\n');
     } else if (field.type == String) {
-      output.write('character varying(255),\n');
+      output.write("CHARACTER VARYING(255) NOT NULL DEFAULT '',\n");
     } else if (field.type == bool) {
-      output.write('boolean,\n');
+      output.write('BOOLEAN NOT NULL DEFAULT FALSE,\n');
     } else if (field.type == DateTime) {
-      output.write('timestamp,\n');
+      output.write('TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n');
     } else if (field.type == int) {
-      output.write('integer,\n');
+      output.write('INTEGER NOT NULL DEFAULT 0,\n');
     } else if (field.type == num) {
-      output.write('double precision,\n');
+      output.write('FLOAT8 NOT NULL DEFAULT 0,\n');
     } else {
       throw new Exception('Not supported type ${field.type}');
     }
@@ -120,7 +120,7 @@ class ObjectoryConsole extends Objectory {
       throw new Exception('doUpdate called with invalid params: $toUpdate');
     }
     var builder =
-        new SqlQueryBuilder(collection, new ObjectoryQueryBuilder().id(id));
+        new SqlQueryBuilder(collection, new QueryBuilder().id(id));
     String command = builder.getUpdateSql(content);
 //    print('$command       ${builder.params}');
     return connection.execute(command, builder.params);
@@ -128,7 +128,7 @@ class ObjectoryConsole extends Objectory {
 
   Future remove(PersistentObject persistentObject) async {
     var builder =
-    new SqlQueryBuilder(persistentObject.collectionName, new ObjectoryQueryBuilder().id(persistentObject.id));
+    new SqlQueryBuilder(persistentObject.collectionName, new QueryBuilder().id(persistentObject.id));
     String command = builder.getDeleteSql();
     return connection.execute(command, builder.params);
   }

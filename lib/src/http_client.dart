@@ -2,7 +2,7 @@ library instock.shelf.objectory.browser_client;
 
 import 'package:objectory/src/persistent_object.dart';
 import 'package:objectory/src/objectory_base.dart';
-import 'package:objectory/src/objectory_query_builder.dart';
+import 'package:objectory/src/query_builder.dart';
 import 'package:bson/bson.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -22,10 +22,10 @@ class ObjectoryMessage {
 class ObjectoryCollectionHttpImpl extends ObjectoryCollection {
   ObjectoryHttpImpl objectoryImpl;
   ObjectoryCollectionHttpImpl(this.objectoryImpl);
-  Future<int> count([ObjectoryQueryBuilder selector]) {
+  Future<int> count([QueryBuilder selector]) {
     Completer completer = new Completer();
     if (selector == null) {
-      selector = new ObjectoryQueryBuilder();
+      selector = new QueryBuilder();
     }
     var obj;
     objectoryImpl
@@ -37,10 +37,10 @@ class ObjectoryCollectionHttpImpl extends ObjectoryCollection {
     return completer.future;
   }
 
-  Future<List<PersistentObject>> find([ObjectoryQueryBuilder selector]) {
+  Future<List<PersistentObject>> find([QueryBuilder selector]) {
     Completer completer = new Completer();
     if (selector == null) {
-      selector = new ObjectoryQueryBuilder();
+      selector = new QueryBuilder();
     }
     var result = objectory.createTypedList(classType);
     objectoryImpl
@@ -62,10 +62,10 @@ class ObjectoryCollectionHttpImpl extends ObjectoryCollection {
     return completer.future;
   }
 
-  Future<PersistentObject> findOne([ObjectoryQueryBuilder selector]) {
+  Future<PersistentObject> findOne([QueryBuilder selector]) {
     Completer completer = new Completer();
     if (selector == null) {
-      selector = new ObjectoryQueryBuilder();
+      selector = new QueryBuilder();
     }
     var obj;
     objectoryImpl
@@ -145,9 +145,9 @@ class ObjectoryHttpImpl extends Objectory {
   }
 
   Future<List<Map>> findRawObjects(String collectionName,
-      [ObjectoryQueryBuilder selector]) async {
+      [QueryBuilder selector]) async {
     if (selector == null) {
-      selector = new ObjectoryQueryBuilder();
+      selector = new QueryBuilder();
     }
     return await _postMessage(_createCommand('find', collectionName),
         selector.map, selector.extParamsMap);

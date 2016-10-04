@@ -4,9 +4,9 @@ import 'dart:mirrors';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:objectory/src/persistent_object.dart';
-import 'package:objectory/src/table.dart';
+import 'package:objectory/src/field.dart';
 
-export 'package:objectory/src/table.dart';
+export 'package:objectory/src/field.dart';
 
 ///<-- Metadata
 
@@ -174,9 +174,9 @@ part of domain_model;
     if (propertyGenerator.propertyType == PropertyType.SIMPLE) {
       output.write('  "${propertyGenerator.name}" ');
       if (propertyGenerator.type == String) {
-        output.write('character varying(255),\n');
+        output.write('CHARACTER VARYING (255) NOT NULL DEFAULT '',\n');
       } else if (propertyGenerator.type == bool) {
-        output.write('boolean,\n');
+        output.write('BOOLEAN NOT NULL DEFAULT FALSE,\n');
       } else if (propertyGenerator.type == DateTime) {
         output.write('timestamp,\n');
       } else if (propertyGenerator.type == int) {
