@@ -5,6 +5,7 @@ class SqlQueryBuilder {
   QueryBuilder parent;
   String tableName;
   String whereClause = '';
+  String orderByClause = '';
   String limitClause = '';
   String skipClause = '';
   List params = [];
@@ -16,17 +17,36 @@ class SqlQueryBuilder {
     if (parent == null) {
       return;
     }
-    Map sourceQuery = parent.map[r'$query'];
+    Map sourceQuery = parent.map['QUERY'];
     if (sourceQuery == null) {
+      return;
+    }
+    if (sourceQuery.isEmpty) {
       return;
     }
     whereClause = ' WHERE ' + _processQueryNode(sourceQuery);
   }
 
+  String getOrderBy() {
+    if (parent?.map == null) {
+      return '';
+    }
+    Map orderByMap = parent.map['ORDERBY'];
+    if (orderByMap == null) {
+      return '';
+    }
+    List<String> fields = [];
+    for (var each in orderByMap.keys) {
+      String desc = orderByMap[each] == -1 ? ' DESC' : '';
+      fields.add('"$each"$desc');
+    }
+    return ' ORDER BY ${fields.join(',')}';
+  }
+
   String _processQueryNode(Map query) {
     if (query.length != 1) {
       throw new Exception(
-          'Unexpected query structure at $query. Whole query: ${parent.map[r"$query"]}');
+          'Unexpected query structure at $query. Whole query: ${parent.map}');
     }
     var key = query.keys.first;
     if (key == 'AND') {
@@ -87,8 +107,8 @@ class SqlQueryBuilder {
         skipClause = ' OFFSET  ${parent.paramSkip}';
       }
     }
-
-    return 'SELECT * FROM "$tableName" $whereClause $limitClause $skipClause';
+    orderByClause = getOrderBy();
+    return 'SELECT * FROM "$tableName" $whereClause $orderByClause $limitClause  $skipClause';
   }
 
   String getDeleteSql() {

@@ -240,4 +240,17 @@ allImplementationTests() {
     expect(count, 2);
   });
 
+  test('ORDER BY', () async {
+    await objectory.truncate(Author);
+    for (int n = 1; n <= 10; n++) {
+      var auth = new Author();
+      auth.name = 'a$n';
+      auth.age = n;
+      await objectory.save(auth);
+    }
+    Author author = await objectory[Author].findOne(where.sortBy($Author.age.id, descending: true));
+    expect(author.age, 10);
+  });
+
+
 }

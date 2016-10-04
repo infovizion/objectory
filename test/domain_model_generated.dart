@@ -17,8 +17,7 @@ class $User {
 
 class User extends PersistentObject {
   String get collectionName => 'User';
-  List<String> get $allFields => $User.allFields;
-  Map<String,Field> get $fields => $UserTable.fields;
+  Map<String,Field> get $fields => $User.fields;
   String get name => getProperty('name');
   set name (String value) => setProperty('name',value);
   String get email => getProperty('email');
@@ -46,8 +45,7 @@ class $Person {
 
 class Person extends PersistentObject {
   String get collectionName => 'Person';
-  List<String> get $allFields => $Person.allFields;
-  Map<String,Field> get $fields => $PersonTable.fields;
+  Map<String,Field> get $fields => $Person.fields;
   String get firstName => getProperty('firstName');
   set firstName (String value) => setProperty('firstName',value);
   String get lastName => getProperty('lastName');
@@ -74,8 +72,7 @@ class $Author {
 
 class Author extends PersistentObject {
   String get collectionName => 'Author';
-  List<String> get $allFields => $Author.allFields;
-  Map<String,Field> get $fields => $AuthorTable.fields;
+  Map<String,Field> get $fields => $Author.fields;
   String get name => getProperty('name');
   set name (String value) => setProperty('name',value);
   String get email => getProperty('email');

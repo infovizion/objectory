@@ -2,13 +2,6 @@
 part of domain_model;
 
 class $User {
-  static String get name => 'name';
-  static String get email => 'email';
-  static String get login => 'login';
-  static final List<String> allFields = [name, email, login];
-}
-
-class $UserTable {
   static Field get name =>
       const Field(id: 'name',label: '',title: '',
           type: String,logChanges: false, foreignKey: false);
@@ -24,8 +17,7 @@ class $UserTable {
 
 class User extends PersistentObject {
   String get collectionName => 'User';
-  List<String> get $allFields => $User.allFields;
-  Map<String,Field> get $fields => $UserTable.fields;
+  Map<String,Field> get $fields => $User.fields;
   String get name => getProperty('name');
   set name (String value) => setProperty('name',value);
   String get email => getProperty('email');
@@ -35,14 +27,6 @@ class User extends PersistentObject {
 }
 
 class $Person {
-  static String get firstName => 'firstName';
-  static String get lastName => 'lastName';
-  static String get father => 'father';
-  static String get mother => 'mother';
-  static final List<String> allFields = [firstName, lastName, father, mother];
-}
-
-class $PersonTable {
   static Field get firstName =>
       const Field(id: 'firstName',label: '',title: '',
           type: String,logChanges: true, foreignKey: false);
@@ -61,8 +45,7 @@ class $PersonTable {
 
 class Person extends PersistentObject {
   String get collectionName => 'Person';
-  List<String> get $allFields => $Person.allFields;
-  Map<String,Field> get $fields => $PersonTable.fields;
+  Map<String,Field> get $fields => $Person.fields;
   String get firstName => getProperty('firstName');
   set firstName (String value) => setProperty('firstName',value);
   String get lastName => getProperty('lastName');
@@ -74,13 +57,6 @@ class Person extends PersistentObject {
 }
 
 class $Author {
-  static String get name => 'name';
-  static String get email => 'email';
-  static String get age => 'age';
-  static final List<String> allFields = [name, email, age];
-}
-
-class $AuthorTable {
   static Field get name =>
       const Field(id: 'name',label: '',title: '',
           type: String,logChanges: false, foreignKey: false);
@@ -96,8 +72,7 @@ class $AuthorTable {
 
 class Author extends PersistentObject {
   String get collectionName => 'Author';
-  List<String> get $allFields => $Author.allFields;
-  Map<String,Field> get $fields => $AuthorTable.fields;
+  Map<String,Field> get $fields => $Author.fields;
   String get name => getProperty('name');
   set name (String value) => setProperty('name',value);
   String get email => getProperty('email');

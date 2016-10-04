@@ -6,10 +6,9 @@ import 'domain_model/domain_model.dart';
 
 
 main() async {
-  print(where.id(12).ne('name','asd').or(where.ne('flag',12)));
+  print(where.sortBy($Author.age.id, descending: true));
 
 
-  return;
 
   String username = 'test';
   String password = 'test';
@@ -21,7 +20,10 @@ main() async {
   objectory = new ObjectoryConsole(uri, registerClasses);
   ObjectoryConsole objectoryConsole = objectory;
   await objectory.initDomainModel();
-  await objectoryConsole.recreateSchema();
+  Author author = await objectory[Author].findOne(where.sortBy($Author.age.id, descending: true));
+  print(author);
+  await objectory.close();
+//  await objectoryConsole.recreateSchema();
 //  var res = await objectoryConsole.connection.query('SELECT * FROM "Author"  WHERE id = @p1', {'p1': 2}).toList();
 //  print(res);
 
@@ -54,18 +56,18 @@ main() async {
 ////  var coll = await objectory[Person].find();
 //  objectory.close();
 
-  await objectory.truncate(Person);
-  Person father = new Person()..firstName = 'Vadim';
-  await father.save();
-  Person son = new Person()..firstName = 'Nick'..father=father;
-  await son.save();
-  int sonId = son.id;
-  objectory.clearCache(Person);
-
-  Person sonFromDb = await objectory[Person].findOne(where.id(sonId));
-
-  print(sonFromDb.father);
-  objectory.close();
+//  await objectory.truncate(Person);
+//  Person father = new Person()..firstName = 'Vadim';
+//  await father.save();
+//  Person son = new Person()..firstName = 'Nick'..father=father;
+//  await son.save();
+//  int sonId = son.id;
+//  objectory.clearCache(Person);
+//
+//  Person sonFromDb = await objectory[Person].findOne(where.id(sonId));
+//
+//  print(sonFromDb.father);
+//  objectory.close();
 
 //  Author author = new Author();
 //  author.age = 141;

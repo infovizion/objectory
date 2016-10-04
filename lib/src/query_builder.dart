@@ -14,10 +14,10 @@ class QueryBuilder {
   bool _isQuerySet = false;
   Map get _query {
     if (!_isQuerySet) {
-      map['\$query'] = {};
+      map['QUERY'] = {};
       _isQuerySet = true;
     }
-    return map['\$query'];
+    return map['QUERY'];
   }
 
   int paramSkip = 0;
@@ -49,7 +49,7 @@ class QueryBuilder {
     } else {
       var expressions = [_query];
       expressions.add(expr);
-      map['\$query'] = {'AND': expressions};
+      map['QUERY'] = {'AND': expressions};
     }
   }
 
@@ -61,8 +61,8 @@ class QueryBuilder {
 
   void _ensureOrderBy() {
     _query;
-    if (!map.containsKey("orderby")) {
-      map["orderby"] = new LinkedHashMap();
+    if (!map.containsKey('ORDERBY')) {
+      map['ORDERBY'] = new LinkedHashMap();
     }
   }
 
@@ -172,7 +172,7 @@ class QueryBuilder {
     if (descending) {
       order = -1;
     }
-    map["orderby"][fieldName] = order;
+    map['ORDERBY'][fieldName] = order;
     return this;
   }
 
@@ -235,7 +235,7 @@ class QueryBuilder {
   ///
   /// Both these queries would produce json map:
   ///
-  ///     {'\$query': {'AND': [{'price':1.99},{'qty': {'\$lt': 20 }}, {'sale': true }]}}
+  ///     {'QUERY': {'AND': [{'price':1.99},{'qty': {'\$lt': 20 }}, {'sale': true }]}}
   QueryBuilder and(QueryBuilder other) {
     if (_query.isEmpty) {
       throw new StateError('`And` opertion is not supported on empty query');
@@ -253,7 +253,7 @@ class QueryBuilder {
   /// * the **price** field value equals 1.99 and
   /// * either the **qty** field value is less than 20 or the **sale** field value is true
   /// MongoDB json query from this expression would be
-  ///      {'\$query': {'AND': [{'price':1.99}, {'OR': [{'qty': {'\$lt': 20 }}, {'sale': true }]}]}}
+  ///      {'QUERY': {'AND': [{'price':1.99}, {'OR': [{'qty': {'\$lt': 20 }}, {'sale': true }]}]}}
   QueryBuilder or(QueryBuilder other) {
     if (_query.isEmpty) {
       throw new StateError('`And` opertion is not supported on empty query');
@@ -264,7 +264,7 @@ class QueryBuilder {
     } else {
       var expressions = [_query];
       expressions.add(other._query);
-      map['\$query'] = {'OR': expressions};
+      map['QUERY'] = {'OR': expressions};
     }
     return this;
   }
