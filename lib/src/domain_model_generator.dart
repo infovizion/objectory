@@ -4,9 +4,23 @@ import 'dart:mirrors';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:objectory/src/persistent_object.dart';
-import 'package:objectory/src/field.dart';
+//import 'package:objectory/src/field.dart';
+//
+//export 'package:objectory/src/field.dart';
 
-export 'package:objectory/src/field.dart';
+
+class Field {
+  final String label;
+  final String title;
+  final bool logChanges;
+  const Field({this.label: '', this.title: '', this.logChanges: true});
+}
+
+class Table {
+  final bool logChanges;
+  const Table({this.logChanges: true});
+}
+
 
 ///<-- Metadata
 
@@ -178,6 +192,7 @@ part of domain_model;
         .join(',');
     output.writeln(" static TableSchema schema = new TableSchema(");
     output.writeln("      tableName: '${classGenerator.type}',");
+    output.writeln("      logChanges: ${classGenerator.table.logChanges},");
     output.writeln('      fields: {$fields});');
     output.writeln('}\n');
   }
@@ -218,7 +233,11 @@ part of domain_model;
     classGenerators.add(generatorClass);
     generatorClass.type = classMirror.reflectedType;
     if (!classMirror.metadata.isEmpty) {
-      generatorClass.isEmbedded = false;
+      classMirror.metadata.where((m) => m.reflectee is Table).forEach((m) {
+        generatorClass.table = m.reflectee as Table;
+      });
+    } else {
+      generatorClass.table = new Table();
     }
 
     classMirror.declarations.forEach((Symbol name, DeclarationMirror vm) =>
@@ -269,6 +288,7 @@ class PropertyGenerator {
 }
 
 class ClassGenerator {
+  Table table;
   Type type;
   String asClass;
   String get persistentClassName => asClass == null ? '$type' : asClass;

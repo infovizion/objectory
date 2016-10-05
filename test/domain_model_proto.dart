@@ -13,6 +13,7 @@ class Author {
 //  Address address;
 }
 
+@Table(logChanges: false)
 class User {
   @Field()
   String name;

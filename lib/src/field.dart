@@ -5,7 +5,8 @@ class Fields {
 class TableSchema {
   final Map<String,Field> fields;
   final String tableName;
-  const TableSchema({this.fields, this.tableName});
+  final bool logChanges;
+  const TableSchema({this.fields, this.tableName, this.logChanges});
 }
 
 class Field {
