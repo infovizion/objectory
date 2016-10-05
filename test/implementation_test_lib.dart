@@ -105,7 +105,7 @@ allImplementationTests() {
     person.firstName = 'Nickolay';
     await person.save();
     var coll = await objectory[Person]
-        .find(where.like($Person.firstName.id, 'niCk%y', caseInsensitive: true));
+        .find(where.like($Person.firstName, 'niCk%y', caseInsensitive: true));
     expect(coll.length, 1);
     Person personFromPg = coll[0];
     expect(personFromPg.firstName, 'Nickolay');
@@ -201,12 +201,12 @@ allImplementationTests() {
     person.lastName = 'initial setup';
     await person.save();
     person =
-        await objectory[Person].findOne(where.eq($Person.firstName.id, '111'));
+        await objectory[Person].findOne(where.eq($Person.firstName, '111'));
     expect(person, isNotNull);
     expect(person.lastName, 'initial setup');
     person.lastName = 'unsaved changes';
     person =
-        await objectory[Person].findOne(where.eq($Person.firstName.id, '111'));
+        await objectory[Person].findOne(where.eq($Person.firstName, '111'));
     expect(person.lastName, 'initial setup',
         reason: 'Find operations should get objects from Db');
     person.lastName = 'unsaved changes';
@@ -225,7 +225,7 @@ allImplementationTests() {
       auth.age = n;
       await objectory.save(auth);
     }
-    int count = await objectory[Author].count(where.lte($Author.age.id, 5).or(where.gt($Author.age.id, 15)));
+    int count = await objectory[Author].count(where.lte($Author.age, 5).or(where.gt($Author.age, 15)));
     expect(count, 10);
   });
   test('oneFrom', () async {
@@ -236,7 +236,7 @@ allImplementationTests() {
       auth.age = n;
       await objectory.save(auth);
     }
-    int count = await objectory[Author].count(where.oneFrom($Author.age.id,[12, 19, 29]));
+    int count = await objectory[Author].count(where.oneFrom($Author.age,[12, 19, 29]));
     expect(count, 2);
   });
 
@@ -248,7 +248,7 @@ allImplementationTests() {
       auth.age = n;
       await objectory.save(auth);
     }
-    Author author = await objectory[Author].findOne(where.sortBy($Author.age.id, descending: true));
+    Author author = await objectory[Author].findOne(where.sortBy($Author.age, descending: true));
     expect(author.age, 10);
   });
 

@@ -8,7 +8,6 @@ import 'query_builder.dart';
 import 'objectory_base.dart';
 import 'objectory_collection_console.dart';
 import 'field.dart';
-export 'objectory_collection_console.dart';
 
 class ObjectoryConsole extends Objectory {
   Connection connection;
@@ -38,7 +37,7 @@ class ObjectoryConsole extends Objectory {
 
   Future createTable(Type persistentClass) async {
     var po = this.newInstance(persistentClass);
-    String tableName = po.collectionName;
+    String tableName = po.tableName;
     String command =
         'CREATE SEQUENCE "${tableName}_id_seq"  INCREMENT 1  MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1';
     try {
@@ -128,7 +127,7 @@ class ObjectoryConsole extends Objectory {
 
   Future remove(PersistentObject persistentObject) async {
     var builder =
-    new SqlQueryBuilder(persistentObject.collectionName, new QueryBuilder().id(persistentObject.id));
+    new SqlQueryBuilder(persistentObject.tableName, new QueryBuilder().id(persistentObject.id));
     String command = builder.getDeleteSql();
     return connection.execute(command, builder.params);
   }

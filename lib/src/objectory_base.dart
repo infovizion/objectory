@@ -180,7 +180,7 @@ class Objectory {
     _linkedTypes[classType] = linkedTypes;
     BasePersistentObject obj = factory();
     if (obj is PersistentObject) {
-      var collectionName = obj.collectionName;
+      var collectionName = obj.tableName;
       _collectionNameToTypeMap[collectionName] = classType;
       _collections[classType] =
           _createObjectoryCollection(classType, collectionName);
@@ -210,7 +210,7 @@ class Objectory {
       await saveObjectToHistory(persistentObject, 'i');
     }
     int newId =
-        await doInsert(persistentObject.collectionName, persistentObject.map);
+        await doInsert(persistentObject.tableName, persistentObject.map);
     persistentObject.id = newId;
     objectory.addToCache(persistentObject);
     return newId;
@@ -275,7 +275,7 @@ class Objectory {
       });
     }
     await saveObjectToHistory(persistentObject, 'u');
-    return doUpdate(persistentObject.collectionName, id, toUpdate);
+    return doUpdate(persistentObject.tableName, id, toUpdate);
   }
 
   completeFindOne(Map map, Completer completer, QueryBuilder selector,
@@ -338,7 +338,7 @@ class Objectory {
     if (!saveAuditData) {
       return;
     }
-    String historyCollectionName = obj.collectionName + 'History';
+    String historyCollectionName = obj.tableName + 'History';
     Map toInsert = new Map.from(obj.map);
     var objectId = toInsert.remove('id');
     toInsert['id'] = idGenerator();
@@ -367,22 +367,22 @@ class Objectory {
     return result;
   }
 
-  Future<List<HistoryRecord>> getHistoryFor(PersistentObject object) async {
-    var result = new List<HistoryRecord>();
-    var items = await findRawObjects(object.collectionName + 'History',
-        where.eq('_originalObjectId', object.id).sortBy('modifiedAt'));
-    var fields = object.$allFields;
-    Map prevItem = {};
-    for (Map item in items) {
-      var historyRecord = getHistoryRecord(fields, item, prevItem);
-      if (historyRecord.content != '') {
-        result.add(historyRecord);
-      }
-      prevItem = item;
-    }
-
-    return result;
-  }
+//  Future<List<HistoryRecord>> getHistoryFor(PersistentObject object) async {
+//    var result = new List<HistoryRecord>();
+//    var items = await findRawObjects(object.collectionName + 'History',
+//        where.eq('_originalObjectId', object.id).sortBy('modifiedAt'));
+//    var fields = object.$allFields;
+//    Map prevItem = {};
+//    for (Map item in items) {
+//      var historyRecord = getHistoryRecord(fields, item, prevItem);
+//      if (historyRecord.content != '') {
+//        result.add(historyRecord);
+//      }
+//      prevItem = item;
+//    }
+//
+//    return result;
+//  }
 
   ObjectoryCollection operator [](Type classType) => _collections[classType];
 }

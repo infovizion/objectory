@@ -125,7 +125,7 @@ class ObjectoryHttpImpl extends Objectory {
       _postMessage(_createCommand('insert', collectionName), map);
 
   Future remove(PersistentObject persistentObject) => _postMessage(
-      _createCommand('remove', persistentObject.collectionName),
+      _createCommand('remove', persistentObject.tableName),
       persistentObject.map);
 
   Future<Map> dropDb() {

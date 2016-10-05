@@ -6,7 +6,7 @@ import 'domain_model/domain_model.dart';
 
 
 main() async {
-  print(where.sortBy($Author.age.id, descending: true));
+  print(where.sortBy($Author.age, descending: true));
 
 
 
@@ -20,7 +20,7 @@ main() async {
   objectory = new ObjectoryConsole(uri, registerClasses);
   ObjectoryConsole objectoryConsole = objectory;
   await objectory.initDomainModel();
-  Author author = await objectory[Author].findOne(where.sortBy($Author.age.id, descending: true));
+  Author author = await objectory[Author].findOne(where.sortBy($Author.age, descending: true));
   print(author);
   await objectory.close();
 //  await objectoryConsole.recreateSchema();

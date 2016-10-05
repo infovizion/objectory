@@ -11,13 +11,13 @@ class $User {
   static Field get login =>
       const Field(id: 'login',label: '',title: '',
           type: String,logChanges: false, foreignKey: false);
-  static Map<String,Field> get fields =>
-      {'name': name,'email': email,'login': login};
+ static TableSchema schema = new TableSchema(
+      tableName: 'User',
+      fields: {'name': name,'email': email,'login': login});
 }
 
 class User extends PersistentObject {
-  String get collectionName => 'User';
-  Map<String,Field> get $fields => $User.fields;
+  TableSchema get $schema => $User.schema;
   String get name => getProperty('name');
   set name (String value) => setProperty('name',value);
   String get email => getProperty('email');
@@ -39,13 +39,13 @@ class $Person {
   static Field get mother =>
       const Field(id: 'mother',label: '',title: '',
           type: Person,logChanges: false, foreignKey: true);
-  static Map<String,Field> get fields =>
-      {'firstName': firstName,'lastName': lastName,'father': father,'mother': mother};
+ static TableSchema schema = new TableSchema(
+      tableName: 'Person',
+      fields: {'firstName': firstName,'lastName': lastName,'father': father,'mother': mother});
 }
 
 class Person extends PersistentObject {
-  String get collectionName => 'Person';
-  Map<String,Field> get $fields => $Person.fields;
+  TableSchema get $schema => $Person.schema;
   String get firstName => getProperty('firstName');
   set firstName (String value) => setProperty('firstName',value);
   String get lastName => getProperty('lastName');
@@ -66,13 +66,13 @@ class $Author {
   static Field get age =>
       const Field(id: 'age',label: '',title: '',
           type: int,logChanges: false, foreignKey: false);
-  static Map<String,Field> get fields =>
-      {'name': name,'email': email,'age': age};
+ static TableSchema schema = new TableSchema(
+      tableName: 'Author',
+      fields: {'name': name,'email': email,'age': age});
 }
 
 class Author extends PersistentObject {
-  String get collectionName => 'Author';
-  Map<String,Field> get $fields => $Author.fields;
+  TableSchema get $schema => $Author.schema;
   String get name => getProperty('name');
   set name (String value) => setProperty('name',value);
   String get email => getProperty('email');
@@ -86,36 +86,3 @@ registerClasses() {
   objectory.registerClass(Person,()=>new Person(),()=>new List<Person>(), {'father': Person, 'mother': Person});
   objectory.registerClass(Author,()=>new Author(),()=>new List<Author>(), {});
 }
-
-
- /// Postgresql DB Schema 
-/*
-CREATE SEQUENCE "User_id_seq"  INCREMENT 1  MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
-CREATE TABLE "User" (
-  "id" integer NOT NULL DEFAULT nextval('"User_id_seq"'::regclass),
-  "name" CHARACTER VARYING (255) NOT NULL DEFAULT ,
-  "email" CHARACTER VARYING (255) NOT NULL DEFAULT ,
-  "login" CHARACTER VARYING (255) NOT NULL DEFAULT ,
-  CONSTRAINT "User_px" PRIMARY KEY ("id")
-);
-
-CREATE SEQUENCE "Person_id_seq"  INCREMENT 1  MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
-CREATE TABLE "Person" (
-  "id" integer NOT NULL DEFAULT nextval('"Person_id_seq"'::regclass),
-  "firstName" CHARACTER VARYING (255) NOT NULL DEFAULT ,
-  "lastName" CHARACTER VARYING (255) NOT NULL DEFAULT ,
-  "father" character varying(255),
-  "mother" character varying(255),
-  CONSTRAINT "Person_px" PRIMARY KEY ("id")
-);
-
-CREATE SEQUENCE "Author_id_seq"  INCREMENT 1  MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
-CREATE TABLE "Author" (
-  "id" integer NOT NULL DEFAULT nextval('"Author_id_seq"'::regclass),
-  "name" CHARACTER VARYING (255) NOT NULL DEFAULT ,
-  "email" CHARACTER VARYING (255) NOT NULL DEFAULT ,
-  "age" integer,
-  CONSTRAINT "Author_px" PRIMARY KEY ("id")
-);
-
-*/

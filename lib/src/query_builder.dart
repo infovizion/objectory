@@ -1,6 +1,7 @@
 library objectory_query;
 
 import 'persistent_object.dart';
+import 'field.dart';
 import 'dart:convert';
 import 'dart:collection';
 
@@ -66,80 +67,80 @@ class QueryBuilder {
     }
   }
 
-  QueryBuilder eq(String fieldName, value) {
-    _addExpression(fieldName, {"=": value});
+  QueryBuilder eq(Field field, value) {
+    _addExpression(field.id, {"=": value});
     return this;
   }
 
   QueryBuilder id(int value) {
-    return eq('id', value);
+    return eq(Fields.id, value);
   }
 
-  QueryBuilder ne(String fieldName, value) {
-    _addExpression(fieldName, {"<>": value});
+  QueryBuilder ne(Field field, value) {
+    _addExpression(field.id, {"<>": value});
     return this;
   }
 
-  QueryBuilder gt(String fieldName, value) {
-    _addExpression(fieldName, {">": value});
+  QueryBuilder gt(Field field, value) {
+    _addExpression(field.id, {">": value});
     return this;
   }
 
-  QueryBuilder lt(String fieldName, value) {
-    _addExpression(fieldName, {"<": value});
+  QueryBuilder lt(Field field, value) {
+    _addExpression(field.id, {"<": value});
     return this;
   }
 
-  QueryBuilder gte(String fieldName, value) {
-    _addExpression(fieldName, {">=": value});
+  QueryBuilder gte(Field field, value) {
+    _addExpression(field.id, {">=": value});
     return this;
   }
 
-  QueryBuilder lte(String fieldName, value) {
-    _addExpression(fieldName, {"<=": value});
+  QueryBuilder lte(Field field, value) {
+    _addExpression(field.id, {"<=": value});
     return this;
   }
 
-  QueryBuilder like(String fieldName, String value, {bool caseInsensitive: false}) {
-    _addExpression(fieldName, {'LIKE': value, 'caseInsensitive': caseInsensitive});
+  QueryBuilder like(Field field, String value, {bool caseInsensitive: false}) {
+    _addExpression(field.id, {'LIKE': value, 'caseInsensitive': caseInsensitive});
     return this;
   }
 
-//  QueryBuilder all(String fieldName, List values) {
-//    _addExpression(fieldName, {"\$all": values});
+//  QueryBuilder all(Field field, List values) {
+//    _addExpression(field.id, {"\$all": values});
 //    return this;
 //  }
 
-//  QueryBuilder notIn(String fieldName, List values) {
-//    _addExpression(fieldName, {"\$nin": values});
+//  QueryBuilder notIn(Field field, List values) {
+//    _addExpression(field.id, {"\$nin": values});
 //    return this;
 //  }
 
-  QueryBuilder oneFrom(String fieldName, List values) {
-    _addExpression(fieldName, {"IN": values, "DUMMY": 0});
+  QueryBuilder oneFrom(Field field, List values) {
+    _addExpression(field.id, {"IN": values, "DUMMY": 0});
     return this;
   }
 
-//  QueryBuilder exists(String fieldName) {
-//    _addExpression(fieldName, {"\$exists": true});
+//  QueryBuilder exists(Field field) {
+//    _addExpression(field.id, {"\$exists": true});
 //    return this;
 //  }
 //
-//  QueryBuilder notExists(String fieldName) {
-//    _addExpression(fieldName, {"\$exists": false});
+//  QueryBuilder notExists(Field field) {
+//    _addExpression(field.id, {"\$exists": false});
 //    return this;
 //  }
 
-//  QueryBuilder mod(String fieldName, int value) {
-//    _addExpression(fieldName, {
+//  QueryBuilder mod(Field field, int value) {
+//    _addExpression(field.id, {
 //      "\$mod": [value, 0]
 //    });
 //    return this;
 //  }
 
-//  SelectorBuilder match(String fieldName, String pattern,
+//  SelectorBuilder match(Field field, String pattern,
 //      {bool multiLine, bool caseInsensitive, bool dotAll, bool extended}) {
-//    _addExpression(fieldName, {
+//    _addExpression(field.id, {
 //      '\$regex': new BsonRegexp(pattern,
 //          multiLine: multiLine,
 //          caseInsensitive: caseInsensitive,
@@ -149,7 +150,7 @@ class QueryBuilder {
 //    return this;
 //  }
 
-//  QueryBuilder inRange(String fieldName, min, max,
+//  QueryBuilder inRange(Field field, min, max,
 //      {bool minInclude: true, bool maxInclude: false}) {
 //    Map rangeMap = {};
 //    if (minInclude) {
@@ -162,17 +163,17 @@ class QueryBuilder {
 //    } else {
 //      rangeMap["\$lt"] = max;
 //    }
-//    _addExpression(fieldName, rangeMap);
+//    _addExpression(field.id, rangeMap);
 //    return this;
 //  }
 
-  QueryBuilder sortBy(String fieldName, {bool descending: false}) {
+  QueryBuilder sortBy(Field field, {bool descending: false}) {
     _ensureOrderBy();
     int order = 1;
     if (descending) {
       order = -1;
     }
-    map['ORDERBY'][fieldName] = order;
+    map['ORDERBY'][field.id] = order;
     return this;
   }
 
@@ -208,19 +209,19 @@ class QueryBuilder {
     return this;
   }
 
-//  QueryBuilder within(String fieldName, value) {
-//    _addExpression(fieldName, {
+//  QueryBuilder within(Field field, value) {
+//    _addExpression(field.id, {
 //      "\$within": {"\$box": value}
 //    });
 //    return this;
 //  }
 //
-//  QueryBuilder near(String fieldName, var value, [double maxDistance]) {
+//  QueryBuilder near(Field field, var value, [double maxDistance]) {
 //    if (maxDistance == null) {
-//      _addExpression(fieldName, {"\$near": value});
+//      _addExpression(field.id, {"\$near": value});
 //    } else {
 //      _addExpression(
-//          fieldName, {"\$near": value, "\$maxDistance": maxDistance});
+//          field.id, {"\$near": value, "\$maxDistance": maxDistance});
 //    }
 //    return this;
 //  }

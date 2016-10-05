@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'field.dart';
 
+
 enum PropertyType {
   String,
   int,
@@ -117,13 +118,15 @@ class BasePersistentObject {
     return this.map[property];
   }
 
-  String toString() => "$collectionName($map)";
+  String toString() => "$tableName($map)";
 
   void init() {}
 
   /// Name of MongoDB collection where instance of this class would  be persistet in DB.
   /// By default equals to class name, but may be overwritten
-  String get collectionName {
+  String get tableName => $schema.tableName;
+
+  TableSchema get $schema {
     throw new Exception('Must be implemented');
   }
 
@@ -163,7 +166,7 @@ class BasePersistentObject {
 class PersistentObject extends BasePersistentObject {
   dynamic get id => map['id'];
 
-  DbRef get dbRef => new DbRef(this.collectionName, this.id);
+  DbRef get dbRef => new DbRef(this.tableName, this.id);
   set id(var value) {
     assert(value == null || value.runtimeType == objectory.idType);
     map['id'] = value;
@@ -212,7 +215,7 @@ class PersistentObject extends BasePersistentObject {
   }
 
   Future getMeFromDb() {
-    return objectory[objectory.getClassTypeByCollection(this.collectionName)]
+    return objectory[objectory.getClassTypeByCollection(this.tableName)]
         .findOne(where.id(this.id));
   }
 
